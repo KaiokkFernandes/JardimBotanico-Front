@@ -2,6 +2,7 @@
   "scripts": {
     "dev": "next dev",
     "test": "jest",
+    "test:watch": "jest --watch",
     "build": "next build",
     "start": "next start"
   },
