@@ -7,9 +7,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.6",
     "next": "^13.1.6",
+    "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
