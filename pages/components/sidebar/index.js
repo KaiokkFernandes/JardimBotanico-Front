@@ -27,11 +27,22 @@ const Sidebar = () => {
   const [exposicao, setExposicao] = useState([]);
 
   useEffect(() => {
-    fetch("/Data/data.json")
-      .then((response) => response.json())
-      .then((data) => setExposicao(data.exposicao))
-      .catch((error) => console.error(error));
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/Data/data.json");
+        const data = await response.json();
+        setExposicao(data.exposicao);
+      } catch (error) {
+        console.error("Erro ao carregar dados da exposição:", error);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  if (exposicao.length === 0) {
+    return <p style={{ padding: "1rem", color: "#888" }}>Carregando lista...</p>;
+  }
 
   return (
     <SidebarList>

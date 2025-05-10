@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { QRCodeCanvas } from "qrcode.react";
 import styled from "styled-components";
 import { FiVolume2 } from "react-icons/fi";
@@ -23,7 +23,7 @@ const TitleSection = styled.div`
   border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
-  position: relative; /* Para posicionar o ícone no canto */
+  position: relative;
 `;
 
 const CommonName = styled.h2`
@@ -46,8 +46,6 @@ const SpeakButton = styled.button`
   border: none;
   cursor: pointer;
   font-size: 1.4rem;
-  
-  /* Ao passar o mouse */
   &:hover {
     color: #007bff;
   }
@@ -87,73 +85,79 @@ const QrCodeWrapper = styled.div`
   margin-top: 1rem;
 `;
 
-function PlantPage() {
-  const { index } = useParams();
+export default function PlantPage() {
+  const { query } = useRouter();
+  const index = query.index;
+
   const [exposicao, setExposicao] = useState([]);
   const [planta, setPlanta] = useState(null);
 
   useEffect(() => {
     fetch("/Data/data.json")
-      .then((response) => response.json())
-      .then((data) => {
-        setExposicao(data.exposicao);
-      })
-      .catch((error) => console.error(error));
+      .then((res) => res.json())
+      .then((data) => setExposicao(data.exposicao))
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.getVoices();
-    };
-  }, []);
-  
-
-  useEffect(() => {
-    if (exposicao.length > 0) {
+    if (exposicao.length > 0 && index !== undefined) {
       setPlanta(exposicao[index]);
     }
   }, [exposicao, index]);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  }, []);
+
   if (!planta) {
-    return <div style={{ textAlign: "center", marginTop: "2rem" }}>Carregando...</div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        Carregando...
+      </div>
+    );
   }
 
-
   const imageUrl = `/imagens/${planta.imagem}`;
-  const currentUrl = window.location.href;
+  const currentUrl =
+    typeof window !== "undefined" ? window.location.href : "";
 
   const handleSpeak = () => {
     const synth = window.speechSynthesis;
-  
-    // Se estiver falando, cancela a fala atual
+
     if (synth.speaking) {
       synth.cancel();
       return;
     }
-  
+
     const textToSpeak = `
       ${planta.nome_comum},
       Nome científico: ${planta.nome_cientifico}.
       Categoria: ${planta.categoria}.
       Descrição: ${planta.descricao}.
       Habitat: ${planta.habitat}.
-      Curiosidades: ${planta.curiosidades ? planta.curiosidades.join(". ") : ""}
+      Curiosidades: ${
+        planta.curiosidades ? planta.curiosidades.join(". ") : ""
+      }
     `;
-  
+
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = "pt-BR";
     synth.speak(utterance);
   };
-  
-  
 
   return (
     <CardContainer>
       <TitleSection>
         <CommonName>{planta.nome_comum}</CommonName>
         <ScientificName>{planta.nome_cientifico}</ScientificName>
-
-        <SpeakButton onClick={handleSpeak} title="Clique para ouvir a descrição">
+        <SpeakButton
+          onClick={handleSpeak}
+          title="Clique para ouvir a descrição"
+        >
           <FiVolume2 />
         </SpeakButton>
       </TitleSection>
@@ -161,28 +165,27 @@ function PlantPage() {
       <CardImage src={imageUrl} alt={planta.nome_comum} />
 
       <InfoText>
-        <strong>Categoria: </strong>{planta.categoria}
+        <strong>Categoria:</strong> {planta.categoria}
       </InfoText>
       <InfoText>{planta.descricao}</InfoText>
       <InfoText>
-        <strong>Habitat: </strong>{planta.habitat}
+        <strong>Habitat:</strong> {planta.habitat}
       </InfoText>
 
-      {planta.curiosidades && planta.curiosidades.length > 0 && (
+      {planta.curiosidades?.length > 0 && (
         <>
           <SubTitle>Curiosidades</SubTitle>
           <CuriositiesList>
-            {planta.curiosidades.map((curiosidade, i) => (
-              <li key={i}>{curiosidade}</li>
+            {planta.curiosidades.map((c, i) => (
+              <li key={i}>{c}</li>
             ))}
           </CuriositiesList>
         </>
       )}
+
       <QrCodeWrapper>
         <QRCodeCanvas value={currentUrl} size={128} />
       </QrCodeWrapper>
     </CardContainer>
   );
 }
-
-export default PlantPage;
