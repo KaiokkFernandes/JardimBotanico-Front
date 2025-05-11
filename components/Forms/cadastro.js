@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { IoIosReturnLeft } from "react-icons/io";
-import Link from 'next/link';
+
 const FormWrapper = styled.form`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -67,52 +67,37 @@ const HelperText = styled.p`
   margin-top: 0.5rem;
 `;
 
-const TopIconLink = styled.a`
-  top: 1rem;
-  left: 1rem;
-  color: #1b5e20;
-  cursor: pointer;
-
-  &:hover {
-    color: #145a14;
-  }
-`;
-
-const LoginForm = ({ onSwitch }) => {
-  const handleLogin = (e) => {
+const FormularioCadastro = ({ onSwitch }) => {
+  const handleRegister = (e) => {
     e.preventDefault();
-    console.log('Login enviado');
+    console.log('Cadastro enviado');
   };
 
   return (
-    <FormWrapper onSubmit={handleLogin}>
+    <FormWrapper onSubmit={handleRegister}>
       <Header>
-        <h2>Login</h2>
+        <h2>Cadastro</h2>
       </Header>
       <div>
-        <Label htmlFor="loginEmail">E-mail:</Label>
-        <Input type="email" id="loginEmail" required />
+        <Label htmlFor="name">Nome:</Label>
+        <Input type="text" id="name" required />
       </div>
       <div>
-        <Label htmlFor="loginPassword">Senha:</Label>
-        <Input type="password" id="loginPassword" required />
+        <Label htmlFor="registerEmail">E-mail:</Label>
+        <Input type="email" id="registerEmail" required />
       </div>
-      <Button type="submit">Entrar</Button>
+      <div>
+        <Label htmlFor="registerPassword">Senha:</Label>
+        <Input type="password" id="registerPassword" required />
+      </div>
+      <Button type="submit">Cadastrar</Button>
       <HelperText>
         <StyledLink onClick={onSwitch}>
-          Não tem conta? Cadastre-se
+          Já tem conta? Fazer login
         </StyledLink>
       </HelperText>
-      <HelperText>
-        <StyledLink color='darkred'>Esqueceu a senha?</StyledLink>
-      </HelperText>
-      <Link href="/" >
-        <TopIconLink>
-          <IoIosReturnLeft style={{height: 32, width: 32}}/>
-        </TopIconLink>
-      </Link>
     </FormWrapper>
   );
 };
 
-export default LoginForm;
+export default FormularioCadastro;

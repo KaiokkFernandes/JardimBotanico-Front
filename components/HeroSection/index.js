@@ -24,7 +24,7 @@ const UserIconLink = styled.div`
 
 const HeroSection = () => (
   <HeroContainer>
-    <Link href="/login-page">
+    <Link href="/auth">
       <UserIconLink>
         <CiUser />
       </UserIconLink>
