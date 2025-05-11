@@ -4,7 +4,7 @@
         "nome_comum": "Amanita-muscaria",
         "nome_cientifico": "Amanita muscaria",
         "categoria": "Fungo",
-        "imagem": "Amanita_muscaria.jpg",
+        "imagem": "../Imagens/Amanita_muscaria.jpg",
         "descricao": "Conhecido pelo seu chapéu vermelho vibrante com pintas brancas, o Amanita muscaria é um dos cogumelos mais icônicos e reconhecíveis do mundo. Apesar da aparência encantadora, é tóxico se ingerido e possui propriedades alucinógenas.",
         "habitat": "Florestas temperadas do hemisfério norte, especialmente próximo a pinheiros e bétulas.",
         "curiosidades": [
@@ -17,7 +17,7 @@
         "nome_comum": "Bugio-ruivo",
         "nome_cientifico": "Alouatta guariba",
         "categoria": "Mamífero",
-        "imagem": "Bugiu-Ruivo.jpg",
+        "imagem": "../Imagens/Bugiu-Ruivo.jpg",
         "descricao": "Esse primata de pelagem avermelhada é conhecido pelo seu potente rugido, que pode ser ouvido a vários quilômetros de distância. Vive em grupos familiares nas copas das árvores e se alimenta de folhas e frutos.",
         "habitat": "Matas Atlânticas e florestas do sul e sudeste do Brasil.",
         "curiosidades": [
@@ -30,7 +30,7 @@
         "nome_comum": "Pica-pau-verde-barrado",
         "nome_cientifico": "Colaptes melanochloros",
         "categoria": "Ave",
-        "imagem": "Colaptes melanochloros.jpg",
+        "imagem": "../Imagens/Colaptes melanochloros.jpg",
         "descricao": "Ave de médio porte, com penas esverdeadas e padrão rajado no peito. Diferentemente de outros pica-paus, costuma se alimentar no solo, principalmente de formigas e cupins.",
         "habitat": "Áreas abertas, campos e bordas de florestas em várias regiões do Brasil.",
         "curiosidades": [
@@ -43,7 +43,7 @@
         "nome_comum": "Cogumelo-dourado",
         "nome_cientifico": "Cryptotrama aspratata",
         "categoria": "Fungo",
-        "imagem": "Cryptotrama_aspartata.jpg",
+        "imagem": "../Imagens/Cryptotrama_aspartata.jpg",
         "descricao": "Um dos cogumelos mais bonitos da natureza, com coloração amarelo-ouro brilhante. Sua aparência aveludada e luminosa lembra flores tropicais.",
         "habitat": "Troncos em decomposição em florestas tropicais e subtropicais.",
         "curiosidades": [
@@ -56,7 +56,7 @@
         "nome_comum": "Fungo-ondulado",
         "nome_cientifico": "Cymatoderma caperatum",
         "categoria": "Fungo",
-        "imagem": "cymatoderma_caperatum.jpg",
+        "imagem": "../Imagens/cymatoderma_caperatum.jpg",
         "descricao": "Apresenta formas irregulares e onduladas, com textura enrugada que lembra uma escultura natural. Ajuda na decomposição de madeira e reciclagem de nutrientes.",
         "habitat": "Sobre troncos mortos ou enterrados em florestas úmidas.",
         "curiosidades": [
@@ -69,7 +69,7 @@
         "nome_comum": "Tatu-mulita",
         "nome_cientifico": "Dasypus hybridus",
         "categoria": "Mamífero",
-        "imagem": "Dasypus-hybridus-1.jpg",
+        "imagem": "../Imagens/Dasypus-hybridus-1.jpg",
         "descricao": "Pequeno tatu com carapaça segmentada, adaptado para cavar tocas subterrâneas. É ativo principalmente à noite e se alimenta de insetos e raízes.",
         "habitat": "Campos e cerrados da América do Sul.",
         "curiosidades": [
@@ -82,7 +82,7 @@
         "nome_comum": "Capivara",
         "nome_cientifico": "Hydrochoerus hydrochaeris",
         "categoria": "Mamífero",
-        "imagem": "Hydrochoerus_hydrochaeris.jpg",
+        "imagem": "../Imagens/Hydrochoerus_hydrochaeris.jpg",
         "descricao": "É o maior roedor do mundo, com comportamento calmo e social. Vive em grupos e passa grande parte do tempo próximo à água.",
         "habitat": "Beiras de rios, lagos e áreas alagadas da América do Sul.",
         "curiosidades": [
@@ -95,7 +95,7 @@
         "nome_comum": "Fungo-toupeira",
         "nome_cientifico": "Kusaghiporia talpae",
         "categoria": "Fungo",
-        "imagem": "kusaghiporia_talpae.jpg",
+        "imagem": "../Imagens/kusaghiporia_talpae.jpg",
         "descricao": "Fungo raro com aparência resinosa, cresce em locais subterrâneos, geralmente em associação com raízes.",
         "habitat": "Ambientes úmidos e sombreados, próximo ao solo.",
         "curiosidades": [
@@ -108,7 +108,7 @@
         "nome_comum": "Quero-quero",
         "nome_cientifico": "Vanellus chilensis",
         "categoria": "Ave",
-        "imagem": "quero-quero.jpg",
+        "imagem": "../Imagens/quero-quero.jpg",
         "descricao": "Ave típica de áreas abertas, conhecida por seu comportamento protetor e grito característico. É muito observada em campos, parques e até em cidades.",
         "habitat": "Campos abertos, áreas rurais e urbanas de toda a América do Sul.",
         "curiosidades": [
