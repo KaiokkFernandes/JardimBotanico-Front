@@ -13,7 +13,7 @@ const HeroContainer = styled.section`
   text-align: center;
 `;
 
-const UserIconLink = styled.a`
+const UserIconLink = styled.div`
   position: absolute;
   top: 20px;
   right: 20px;
@@ -24,7 +24,7 @@ const UserIconLink = styled.a`
 
 const HeroSection = () => (
   <HeroContainer>
-    <Link href="/login-page" passHref>
+    <Link href="/login-page">
       <UserIconLink>
         <CiUser />
       </UserIconLink>
