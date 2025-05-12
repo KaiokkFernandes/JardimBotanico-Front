@@ -33,8 +33,8 @@ const MapContainer = styled.div`
 `;
 
 const center = {
-  lat: -29.7186,
-  lng: -53.7137
+  lat: -29.718993627397357,
+  lng: -53.72945758442846
 };
 
 
