@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { FaAddressBook, FaCalendarCheck, FaCalendarAlt } from 'react-icons/fa';
-
+import { FaFilePen } from "react-icons/fa6";
 
 
 const Section = styled.section`
@@ -65,6 +65,10 @@ const UtilidadesSection = () => {
         <IconCard href="https://docs.google.com/forms/d/e/1FAIpQLSeuJQHweH6KzWk_PBFHJytr7aTfmjD2mKKFL0vpm8hnZRlKHQ/viewform" target="_blank">
           <FaCalendarAlt />
           <span>Agendamento do Auditório</span>
+        </IconCard>
+        <IconCard href="/formulario-visita" target="_blank">
+          <FaFilePen />
+          <span>Fornecer Informações da Visita</span>
         </IconCard>
       </IconGrid>
     </Section>

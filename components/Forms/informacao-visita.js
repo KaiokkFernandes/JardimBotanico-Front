@@ -4,7 +4,7 @@ import CampoCurso from '../Utils/cursos';
 const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   background-color: #ffffff;
   border-radius: 8px;
   padding: 2rem;
@@ -60,10 +60,23 @@ const Container = styled.div`
   }
 `;
 
+const ButtonVoltar = styled(Button)`
+  background-color: #c62828;
+  margin-top: 0.5rem;
+
+  &:hover {
+    background-color: #b71c1c;
+  }
+`;
+
 const FormularioInformacaoVisita = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Formulário de visita enviado');
+  };
+
+  const handleVoltar = () => {
+    window.location.href = '/'; 
   };
 
   const dataAtual = new Date().toISOString().split('T')[0];
@@ -95,6 +108,9 @@ const FormularioInformacaoVisita = () => {
       </Container>
 
       <Button type="submit">Enviar</Button>
+      <ButtonVoltar onClick={handleVoltar}>
+        Voltar
+      </ButtonVoltar>
     </FormWrapper>
   );
 };
