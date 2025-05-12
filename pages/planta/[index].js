@@ -95,7 +95,7 @@ export default function PlantPage() {
   useEffect(() => {
     fetch("/Data/data.json")
       .then((res) => res.json())
-      .then((data) => setExposicao(data.exposicao))
+      .then((data) => setExposicao([...(data.flora || []), ...(data.fauna || [])])) // junta as listas novamente aki
       .catch(console.error);
   }, []);
 

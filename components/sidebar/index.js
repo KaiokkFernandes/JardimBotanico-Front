@@ -1,4 +1,3 @@
-// components/Sidebar/index.js
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import styled from "styled-components";
@@ -31,7 +30,11 @@ const Sidebar = () => {
       try {
         const response = await fetch("/Data/data.json");
         const data = await response.json();
-        setExposicao(data.exposicao);
+        const itens = [...(data.flora || []), ...(data.fauna || [])];
+        console.log("itens:", itens); // Isso vai exibir o array de objetos corretamente no console
+        console.log("itens como JSON:", JSON.stringify(itens, null, 2)); // Isso vai mostrar a estrutura em formato JSON legível
+
+        setExposicao(itens);
       } catch (error) {
         console.error("Erro ao carregar dados da exposição:", error);
       }
@@ -39,6 +42,7 @@ const Sidebar = () => {
 
     fetchData();
   }, []);
+
 
   if (exposicao.length === 0) {
     return <p style={{ padding: "1rem", color: "#888" }}>Carregando lista...</p>;
