@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ModalAdicionarItem from '../../components/Utils/modal-add-item';
 import ModalEditarItem from '../../components/Utils/modal-edit-item';
 import ModalDeletarItem from '../../components/Utils/modal-delete-item';
+import { fetchEspecimes, fetchEspecimeById, updateEspecime, deleteEspecime } from '../API/api';
 const Container = styled.div`
     padding-top: 60px; /* mesmo valor da altura da barra superior */
     width: 75%;
@@ -101,30 +102,67 @@ const Botao = styled.button`
 `;
 
 const ListaItens = ({itens}) => {
-    const [filtro, setFiltro] = useState('');
-    const [showModalForm, setShowModalForm] = useState(false);
-    const [showModalDelete, setShowModalDelete] = useState(false);
-    const [itemSelecionado, setItemSelecionado] = useState(null);
+  const [filtro, setFiltro] = useState('');
+  const [showModalForm, setShowModalForm] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
+  const [itemSelecionado, setItemSelecionado] = useState(null);
+  const [itensList, setItensList] = useState(itens);
+  
+  useEffect(() => {
+    // atualizar esse codigo para suportar o booleano de fauna/flora
+    async function carregarItens() {
+      try {
+        const fetchedItens = await fetchEspecimes();
+        setItensList(fetchedItens);
+      } catch (error) {
+        console.error("Erro ao carregar os itens:", error);
+      }
+    }
 
-    const handleEdit = (item) => {
-        setItemSelecionado(item);
-        setShowModalForm(true);
-    };
+    carregarItens();
+  }, []);
 
-    const handleDelete = (itemId) => {
-        const item = itens.find(f => f.id === itemId.id);
-        setItemSelecionado(item);
-        console.log("tentando deletar:", itemSelecionado)
-        setShowModalDelete(true);
-    };
 
-  const itensFiltrados = itens.filter((item) => {
+  const handleEdit = (item) => {
+      setItemSelecionado(item);
+      setShowModalForm(true);
+  };
+
+  const handleDelete = (itemId) => {
+      const item = itensList.find(f => f.id === itemId.id);
+      setItemSelecionado(item);
+      setShowModalDelete(true);
+  };
+
+  const itensFiltrados = itensList.filter((item) => {
     const termo = filtro.toLowerCase();
     return (
       item.nome_comum?.toLowerCase().includes(termo) ||
       item.nome_cientifico?.toLowerCase().includes(termo)
     );
   });
+
+  const onEdit = async (updatedItem) => {
+    try {
+      const response = await updateEspecime(updatedItem.id, updatedItem);
+      const updatedItens = itensList.map(item => item.id === updatedItem.id ? updatedItem : item);
+      setItensList(updatedItens);
+      setShowModalForm(false);
+    } catch (error) {
+      console.error("Erro ao editar o item:", error);
+    }
+  };
+
+  const onDelete = async (id) => {
+    try {
+      await deleteEspecime(id);
+      const updatedItens = itensList.filter(item => item.id !== id);
+      setItensList(updatedItens);
+      setShowModalDelete(false);
+    } catch (error) {
+      console.error("Erro ao deletar o item:", error);
+    }
+  };
 
   return (
     <Container>
@@ -165,12 +203,7 @@ const ListaItens = ({itens}) => {
             setShowModalForm(false);
             setItemSelecionado(null);
             }}
-            onSubmit={(updatedItem) => {
-            onEdit(updatedItem);
-            setShowModalForm(false);
-            setItemSelecionado(null);
-            }}
-            
+            onSubmit={onEdit}
         />
         
         )}
@@ -183,8 +216,6 @@ const ListaItens = ({itens}) => {
             }}
             onConfirm={() => {
                 onDelete(itemSelecionado.id);
-                setShowModalDelete(false);
-                setItemSelecionado(null);
             }}
             item={itemSelecionado}
         />

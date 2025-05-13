@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { createEspecime } from '../API/api';
 
 const ModalBackground = styled.div`
   position: fixed;
@@ -96,14 +97,24 @@ const ModalAdicionarItem = ({ isOpen, onClose, onSubmit }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    try {
     const novoItem = {
-      ...formData,
-      id: Date.now(),
-      preview: previewUrl, // para exibir depois
+      nome_comum: formData.nome,
+      curiosidade: formData.curiosidade,
+      categoria: formData.categoria,
+      habitat: formData.habitat,
+      descricao: formData.descricao,
+      imagem: previewUrl || '', // base64 da imagem
     };
-    onSubmit(novoItem);
+
+    const resposta = await createEspecime(novoItem); // Envia para o back-end
+    onSubmit(resposta); // Adiciona no front-end com os dados retornados (incluindo ID, etc.)
     onClose();
+    } catch (err) {
+      console.error("Erro ao criar espécime:", err);
+      alert("Erro ao criar espécime. Tente novamente.");
+    }
   };
 
   return (
