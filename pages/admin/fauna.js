@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ListaItens from '../../components/Utils/lista';
 import BarraInferior from '../../components/Utils/footer';
 import BarraSuperior from '../../components/Utils/header';
+import ModalAdicionarItem from '../../components/Utils/modal-add-item';
 import styled from 'styled-components';
 import { FaPlus } from 'react-icons/fa';
 const Container = styled.div`
@@ -35,50 +36,49 @@ const BotaoAdicionar = styled.button`
 
 
 const PainelFauna = () => {
-  const [fauna, setFauna] = useState([]);
+    const [fauna, setFauna] = useState([]);
+    const [showModalForm, setShowModalForm] = useState(false);
 
-  const handleEdit = (item) => {
-    console.log("editei:", item);
-    // Aqui você pode abrir um modal com os dados do item
-  };
+    useEffect(() => {
+        const fetchData = async () => {
+        try {
+            const response = await fetch("/Data/data.json");
+            const data = await response.json();
+            const itens = [...(data.fauna || [])];
+            console.log("itens:", itens);
+            console.log("itens como JSON:", JSON.stringify(itens, null, 2));
 
-  const handleDelete = (itemId) => {
-    console.log("deletei o item com ID:", itemId);
-    // Aqui você pode abrir um modal de confirmação de exclusão
-  };
+            setFauna(itens);
+        } catch (error) {
+            console.error("Erro ao carregar dados da exposição:", error);
+        }
+        };
 
-   const handleAdd = () => {
-    console.log("clicou em adicionar novo item");
-    // Aqui você pode abrir um modal, navegar para uma página ou abrir um formulário
-  };
+        fetchData();
+    }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/Data/data.json");
-        const data = await response.json();
-        const itens = [...(data.fauna || [])];
-        console.log("itens:", itens);
-        console.log("itens como JSON:", JSON.stringify(itens, null, 2));
-
-        setFauna(itens);
-      } catch (error) {
-        console.error("Erro ao carregar dados da exposição:", error);
-      }
+    const handleAdd = () => {
+        setShowModalForm(true);
+        console.log("clicou em adicionar novo item");
     };
-
-    fetchData();
-  }, []);
 
   return (
     <Container>
         <BarraSuperior titulo="Painel da fauna" />  
-        <ListaItens itens={fauna} onEdit={handleEdit} onDelete={handleDelete} />
+        <ListaItens itens={fauna} />
         <Section>
           <BotaoAdicionar onClick={handleAdd}>
             <FaPlus /> Adicionar novo item
           </BotaoAdicionar>
         </Section>
+        {/* Modal de Adicionar */}
+        {showModalForm && (
+            <ModalAdicionarItem
+                isOpen={showModalForm}
+                onClose={() => setShowModalForm(false)}
+            />
+        )}
+
         <BarraInferior />
     </Container>
   );

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-
+import ModalAdicionarItem from '../../components/Utils/modal-add-item';
+import ModalEditarItem from '../../components/Utils/modal-edit-item';
+import ModalDeletarItem from '../../components/Utils/modal-delete-item';
 const Container = styled.div`
     padding-top: 60px; /* mesmo valor da altura da barra superior */
     width: 75%;
@@ -98,8 +100,23 @@ const Botao = styled.button`
     }
 `;
 
-const ListaItens = ({ itens, onEdit, onDelete }) => {
-  const [filtro, setFiltro] = useState('');
+const ListaItens = ({itens}) => {
+    const [filtro, setFiltro] = useState('');
+    const [showModalForm, setShowModalForm] = useState(false);
+    const [showModalDelete, setShowModalDelete] = useState(false);
+    const [itemSelecionado, setItemSelecionado] = useState(null);
+
+    const handleEdit = (item) => {
+        setItemSelecionado(item);
+        setShowModalForm(true);
+    };
+
+    const handleDelete = (itemId) => {
+        const item = itens.find(f => f.id === itemId.id);
+        setItemSelecionado(item);
+        console.log("tentando deletar:", itemSelecionado)
+        setShowModalDelete(true);
+    };
 
   const itensFiltrados = itens.filter((item) => {
     const termo = filtro.toLowerCase();
@@ -134,12 +151,44 @@ const ListaItens = ({ itens, onEdit, onDelete }) => {
                 <Desc>{item.descricao}</Desc>
             </Info>
             <Acoes>
-                <Botao onClick={() => onEdit(item)}>Editar</Botao>
-                <Botao danger onClick={() => onDelete(item.id)}>Excluir</Botao>
+                <Botao onClick={() => handleEdit(item)}>Editar</Botao>
+                <Botao danger onClick={() => handleDelete(item)}>Excluir</Botao>
             </Acoes>
             </Item>
         ))}
         </Lista>
+        {showModalForm && (
+        <ModalEditarItem
+            isOpen={showModalForm}
+            item={itemSelecionado}
+            onClose={() => {
+            setShowModalForm(false);
+            setItemSelecionado(null);
+            }}
+            onSubmit={(updatedItem) => {
+            onEdit(updatedItem);
+            setShowModalForm(false);
+            setItemSelecionado(null);
+            }}
+            
+        />
+        
+        )}
+        {showModalDelete && (
+        <ModalDeletarItem
+            isOpen={showModalDelete}
+            onClose={() => {
+                setShowModalDelete(false);
+                setItemSelecionado(null);
+            }}
+            onConfirm={() => {
+                onDelete(itemSelecionado.id);
+                setShowModalDelete(false);
+                setItemSelecionado(null);
+            }}
+            item={itemSelecionado}
+        />
+        )}
     </Container>
   );
 };
