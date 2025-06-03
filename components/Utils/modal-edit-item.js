@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
 const ModalBackground = styled.div`
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0,0,0,0.6);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,6 +25,43 @@ const ModalContainer = styled.div`
 
 const Titulo = styled.h2`
   margin-bottom: 1rem;
+`;
+
+const FileInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const HiddenFileInput = styled.input`
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+`;
+
+const CustomFileButton = styled.label`
+  padding: 0.5rem 1rem;
+  background-color: #2e7d32;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #276a27;
+  }
+`;
+
+const FileName = styled.span`
+  font-size: 0.9rem;
+  color: #555;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Label = styled.label`
@@ -60,8 +100,8 @@ const Botoes = styled.div`
 
 const Botao = styled.button`
   padding: 0.5rem 1rem;
-  background: ${(props) => props.cancelar ? "#ccc" : "#1565c0"};
-  color: ${(props) => props.cancelar ? "black" : "white"};
+  background: ${(props) => (props.cancelar ? "#ccc" : "#1565c0")};
+  color: ${(props) => (props.cancelar ? "black" : "white")};
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -69,25 +109,32 @@ const Botao = styled.button`
 
 const ModalEditarItem = ({ isOpen, item, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    nome: '',
-    curiosidade: '',
-    categoria: '',
-    habitat: '',
-    descricao: '',
-    foto: null,
+    id: "",
+    nome: "",
+    nome_cientifico: "",
+    curiosidade: "",
+    categoria: "",
+    habitat: "",
+    descricao: "",
+    foto: "",
+    tipo: "",
   });
 
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [fileName, setFileName] = useState("");
 
   useEffect(() => {
     if (item) {
       setFormData({
-        nome: item.nome || '',
-        curiosidade: item.curiosidade || '',
-        categoria: item.categoria || '',
-        habitat: item.habitat || '',
-        descricao: item.descricao || '',
-        foto: item.foto || null,
+        id: item.id,
+        nome: item.name || "",
+        nome_cientifico: item.scientific_name || "",
+        curiosidade: item.curiosity || "",
+        categoria: item.category || "",
+        habitat: item.habitat || "",
+        descricao: item.description || "",
+        tipo: item.specimen_type || "",
+        foto: item.image_url || null,
       });
       setPreviewUrl(item.preview || item.foto || null);
     }
@@ -97,55 +144,119 @@ const ModalEditarItem = ({ isOpen, item, onClose, onSubmit }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFotoChange = (e) => {
     const file = e.target.files[0];
-    setFormData(prev => ({ ...prev, foto: file }));
+    setFormData((prev) => ({ ...prev, foto: file }));
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setPreviewUrl(reader.result);
       reader.readAsDataURL(file);
+      setFileName(file.name);
+    } else {
+      setFileName("");
+      setPreviewUrl(null);
     }
   };
 
   const handleSubmit = () => {
-    const itemEditado = {
-      ...formData,
-      id: item.id,
-      preview: previewUrl
-    };
-    onSubmit(itemEditado);
-    onClose();
+    try {
+      const itemEditado = {
+        id: formData.id,
+        name: formData.nome,
+        scientific_name: formData.nome_cientifico,
+        curiosity: formData.curiosidade,
+        category: formData.categoria,
+        habitat: formData.habitat,
+        description: formData.descricao,
+        image_url: fileName || "",
+        specimen_type: formData.tipo,
+      };
+      onSubmit(itemEditado);
+      onClose();
+    } catch (err) {
+      console.error("Erro ao editar espécime:", err);
+      alert("Erro ao editar espécime. Tente novamente.");
+    }
   };
 
   return (
     <ModalBackground>
       <ModalContainer>
-        <Titulo>Editar {item.nome_comum}</Titulo>
+        <Titulo>Editar {item.name}</Titulo>
 
-        <Label>Foto</Label>
-        <Input type="file" accept="image/*" onChange={handleFotoChange} />
-        {previewUrl && <Preview src={previewUrl} alt="Prévia da imagem" />}
+        <FileInputWrapper>
+          <HiddenFileInput
+            id="file-upload"
+            type="file"
+            accept="image/*"
+            onChange={handleFotoChange}
+          />
+          <CustomFileButton htmlFor="file-upload">
+            Selecionar Imagem
+          </CustomFileButton>
+          <FileName>{fileName || "Nenhum arquivo selecionado"}</FileName>
+
+          {previewUrl && (
+            <Preview
+              style={{ width: 200, height: 200 }}
+              src={previewUrl}
+              alt="Prévia da imagem"
+            />
+          )}
+        </FileInputWrapper>
 
         <Label>Nome</Label>
         <Input name="nome" value={formData.nome} onChange={handleChange} />
 
         <Label>Curiosidade</Label>
-        <Input name="curiosidade" value={formData.curiosidade} onChange={handleChange} />
+        <Input
+          name="curiosidade"
+          value={formData.curiosidade}
+          onChange={handleChange}
+        />
 
         <Label>Categoria</Label>
-        <Input name="categoria" value={formData.categoria} onChange={handleChange} />
+        <Input
+          name="categoria"
+          value={formData.categoria}
+          onChange={handleChange}
+        />
 
         <Label>Habitat</Label>
-        <Input name="habitat" value={formData.habitat} onChange={handleChange} />
+        <Input
+          name="habitat"
+          value={formData.habitat}
+          onChange={handleChange}
+        />
+
+        <Label htmlFor="tipo">Tipo</Label>
+        <Input
+          type="text"
+          id="tipo"
+          className="form-control"
+          value={formData.tipo}
+          readOnly
+          disabled
+          style={{
+            backgroundColor: "#e9ecef",
+            color: "rgb(170, 171, 171)",
+          }}
+        />
 
         <Label>Descrição</Label>
-        <TextArea name="descricao" value={formData.descricao} onChange={handleChange} />
+        <TextArea
+          name="descricao"
+          value={formData.descricao}
+          onChange={handleChange}
+        />
 
         <Botoes>
-          <Botao cancelar onClick={onClose}>Cancelar</Botao>
+          <Botao cancelar onClick={onClose}>
+            Cancelar
+          </Botao>
           <Botao onClick={handleSubmit}>Salvar Alterações</Botao>
         </Botoes>
       </ModalContainer>

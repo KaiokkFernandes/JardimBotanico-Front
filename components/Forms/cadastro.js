@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
-
+import { createUser } from '../API/api';
 const FormWrapper = styled.form`
   position: relative;
   display: flex;
@@ -68,9 +68,19 @@ const HelperText = styled.p`
 `;
 
 const FormularioCadastro = ({ onSwitch }) => {
-  const handleRegister = (e) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleRegister = async (e) => {
     e.preventDefault();
-    console.log('Cadastro enviado');
+    try {
+      await createUser({ name, email, password });
+      alert('Usuário cadastrado com sucesso!');
+      onSwitch();
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -80,16 +90,13 @@ const FormularioCadastro = ({ onSwitch }) => {
       </Header>
       <div>
         <Label htmlFor="name">Nome:</Label>
-        <Input type="text" id="name" required />
-      </div>
+        <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />      </div>
       <div>
         <Label htmlFor="registerEmail">E-mail:</Label>
-        <Input type="email" id="registerEmail" required />
-      </div>
+        <Input id="registerEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />      </div>
       <div>
         <Label htmlFor="registerPassword">Senha:</Label>
-        <Input type="password" id="registerPassword" required />
-      </div>
+        <Input id="registerPassword" minLength={6} type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />      </div>
       <Button type="submit">Cadastrar</Button>
       <HelperText>
         <StyledLink onClick={onSwitch}>

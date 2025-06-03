@@ -48,7 +48,7 @@ const ModalDeletarItem = ({ isOpen, onClose, onConfirm, item }) => {
     <ModalBackground>
       <ModalContainer>
         <Titulo>Confirmar Exclusão</Titulo>
-        <p>Você realmente deseja excluir <strong>{item?.nome_comum}</strong> do acervo?</p>
+        <p>Você realmente deseja excluir <strong>{item.name}</strong> do acervo?</p>
         <Botoes>
           <Botao cancelar onClick={onClose}>Cancelar</Botao>
           <Botao onClick={() => { onConfirm(item.id); onClose(); }}>

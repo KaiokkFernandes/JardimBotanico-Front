@@ -1,7 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import { IoIosReturnLeft } from "react-icons/io";
 import Link from 'next/link';
+import { fetchUsers } from '../API/api';
+import { useRouter } from 'next/router';
+
 const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
@@ -79,10 +82,26 @@ const TopIconLink = styled.a`
 `;
 
 const LoginForm = ({ onSwitch }) => {
-  const handleLogin = (e) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('Login enviado');
+    try {
+      const users = await fetchUsers();
+      const user = users.find(u => u.email === email && u.password === password); // simplificado
+
+      if (user) {
+        alert('Login bem-sucedido!');
+        router.push('/admin'); // caso seja mesma aplicação
+      } else {
+        alert('Usuário ou senha inválidos');
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
+  
 
   return (
     <FormWrapper onSubmit={handleLogin}>
@@ -91,11 +110,11 @@ const LoginForm = ({ onSwitch }) => {
       </Header>
       <div>
         <Label htmlFor="loginEmail">E-mail:</Label>
-        <Input type="email" id="loginEmail" required />
+        <Input id="loginEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />      
       </div>
       <div>
         <Label htmlFor="loginPassword">Senha:</Label>
-        <Input type="password" id="loginPassword" required />
+        <Input id="loginPassword" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       </div>
       <Button type="submit">Entrar</Button>
       <HelperText>
@@ -106,10 +125,8 @@ const LoginForm = ({ onSwitch }) => {
       <HelperText>
         <StyledLink color='darkred'>Esqueceu a senha?</StyledLink>
       </HelperText>
-      <Link href="/" >
-        <TopIconLink>
+      <Link href="/" passHref>
           <IoIosReturnLeft style={{height: 32, width: 32}}/>
-        </TopIconLink>
       </Link>
     </FormWrapper>
   );

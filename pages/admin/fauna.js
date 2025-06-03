@@ -5,6 +5,7 @@ import BarraSuperior from '../../components/Utils/header';
 import ModalAdicionarItem from '../../components/Utils/modal-add-item';
 import styled from 'styled-components';
 import { FaPlus } from 'react-icons/fa';
+import { fetchEspecimesBySpecimenType } from '../../components/API/api';
 const Container = styled.div`
     padding-top: 35px; /* evita sobreposição com barra superior */
     padding-bottom: 70px; /* evita sobreposição com barra inferior */
@@ -38,24 +39,21 @@ const BotaoAdicionar = styled.button`
 const PainelFauna = () => {
     const [fauna, setFauna] = useState([]);
     const [showModalForm, setShowModalForm] = useState(false);
-
+    const [faunaOrFlora, setFaunaOrFlora] = useState("FAUNA")
     useEffect(() => {
         const fetchData = async () => {
-        try {
-            const response = await fetch("/Data/data.json");
-            const data = await response.json();
-            const itens = [...(data.fauna || [])];
-            console.log("itens:", itens);
-            console.log("itens como JSON:", JSON.stringify(itens, null, 2));
-
-            setFauna(itens);
-        } catch (error) {
-            console.error("Erro ao carregar dados da exposição:", error);
-        }
+            try {
+                const response = fetchEspecimesBySpecimenType(faunaOrFlora);
+                const data = await response;
+                const itens = [...(data || [])];
+                setFauna(itens);
+            } catch (error) {
+                console.error("Erro ao carregar dados da exposição:", error);
+            }
         };
 
         fetchData();
-    }, []);
+    }, [fauna]);
 
     const handleAdd = () => {
         setShowModalForm(true);
@@ -76,6 +74,7 @@ const PainelFauna = () => {
             <ModalAdicionarItem
                 isOpen={showModalForm}
                 onClose={() => setShowModalForm(false)}
+                FaunaOrFlora={faunaOrFlora}
             />
         )}
 

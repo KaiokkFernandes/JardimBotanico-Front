@@ -107,21 +107,15 @@ const ListaItens = ({itens}) => {
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [itemSelecionado, setItemSelecionado] = useState(null);
   const [itensList, setItensList] = useState(itens);
-  
+
+  const getImageSrc = (imagem) => {
+  if (!imagem || imagem.trim() === '') return '/Imagens/fallback-image.jpg';
+    return imagem;
+  };
+
   useEffect(() => {
-    // atualizar esse codigo para suportar o booleano de fauna/flora
-    async function carregarItens() {
-      try {
-        const fetchedItens = await fetchEspecimes();
-        setItensList(fetchedItens);
-      } catch (error) {
-        console.error("Erro ao carregar os itens:", error);
-      }
-    }
-
-    carregarItens();
-  }, []);
-
+    setItensList(itens);
+  }, [itens]);
 
   const handleEdit = (item) => {
       setItemSelecionado(item);
@@ -134,20 +128,15 @@ const ListaItens = ({itens}) => {
       setShowModalDelete(true);
   };
 
-  const itensFiltrados = itensList.filter((item) => {
-    const termo = filtro.toLowerCase();
-    return (
-      item.nome_comum?.toLowerCase().includes(termo) ||
-      item.nome_cientifico?.toLowerCase().includes(termo)
-    );
-  });
-
   const onEdit = async (updatedItem) => {
     try {
       const response = await updateEspecime(updatedItem.id, updatedItem);
-      const updatedItens = itensList.map(item => item.id === updatedItem.id ? updatedItem : item);
+      const updatedItens = itensList.map(item =>
+        item.id === response.id ? response : item
+      );
       setItensList(updatedItens);
       setShowModalForm(false);
+      console.log(response);
     } catch (error) {
       console.error("Erro ao editar o item:", error);
     }
@@ -155,10 +144,11 @@ const ListaItens = ({itens}) => {
 
   const onDelete = async (id) => {
     try {
-      await deleteEspecime(id);
+      const response = deleteEspecime(id);
       const updatedItens = itensList.filter(item => item.id !== id);
       setItensList(updatedItens);
       setShowModalDelete(false);
+      console.log("Sucesso ao deletar: ", response);
     } catch (error) {
       console.error("Erro ao deletar o item:", error);
     }
@@ -167,33 +157,39 @@ const ListaItens = ({itens}) => {
   return (
     <Container>
         <div style={{textAlign: "center"}}>
-            <Filtro
-            type="text"
-            placeholder="Filtrar por nome comum ou científico..."
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-            />
+          <Filtro
+          type="text"
+          placeholder="Filtrar por nome comum ou científico..."
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          />
         </div>
         <Lista>
-        {itensFiltrados.map((item) => (
-            <Item key={item.id}>
-            {item.imagem && (
+          {itensList
+            .filter((item) =>
+              item.name.toLowerCase().includes(filtro.toLowerCase()) ||
+              item.description.toLowerCase().includes(filtro.toLowerCase())
+            )
+            .map((item) => (
+              <Item key={item.id}>
                 <Imagem
-                src={item.imagem.startsWith('http') ? item.imagem : `/images/${item.imagem}`}
-                alt={item.nome_comum}
+                  src={getImageSrc(item.imagem)}
+                  alt={item.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/Imagens/fallback-image.jpg';
+                  }}
                 />
-            )}
-            <Info>
-                <Nome>{item.nome_comum}</Nome>
-                <Cientifico>{item.nome_cientifico}</Cientifico>
-                <Desc>{item.descricao}</Desc>
-            </Info>
-            <Acoes>
-                <Botao onClick={() => handleEdit(item)}>Editar</Botao>
-                <Botao danger onClick={() => handleDelete(item)}>Excluir</Botao>
-            </Acoes>
-            </Item>
-        ))}
+                <Info>
+                  <Nome>{item.name}</Nome>
+                  <Desc>{item.description}</Desc>
+                </Info>
+                <Acoes>
+                  <Botao onClick={() => handleEdit(item)}>Editar</Botao>
+                  <Botao danger onClick={() => handleDelete(item)}>Excluir</Botao>
+                </Acoes>
+              </Item>
+            ))}
         </Lista>
         {showModalForm && (
         <ModalEditarItem
