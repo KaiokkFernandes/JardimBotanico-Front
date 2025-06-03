@@ -83,11 +83,11 @@ const NextButton = styled(CarouselButton)`
 
 const AboutSection = () => {
   const images = [
-    '/imagens/About1.png',
-    '/imagens/About2.png',
-    '/imagens/About3.png',
-    '/imagens/About4.png',
-    '/imagens/About5.png',
+    '/Imagens/About1.png',
+    '/Imagens/About2.png',
+    '/Imagens/about3.png',
+    '/Imagens/About4.png',
+    '/Imagens/About5.png',
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
