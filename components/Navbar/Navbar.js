@@ -1,37 +1,25 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { BiMenu, BiX } from "react-icons/bi";
 
-const Navbar = () => {
+const Navbar = ({ type = "default", config = {} }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
+    if (type === "none") return;
+
     let lastScrollY = window.scrollY;
-
     const controlNavbar = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-
-      lastScrollY = currentScrollY;
+      setIsVisible(window.scrollY < lastScrollY || window.scrollY < 100);
+      lastScrollY = window.scrollY;
     };
 
     window.addEventListener("scroll", controlNavbar);
     return () => window.removeEventListener("scroll", controlNavbar);
-  }, []);
+  }, [type]);
 
-  const navLinks = [
-    { href: "/", label: "Página inicial" },
-    { href: "/regras", label: "Regras do Jardim" },
-    { href: "/comochegar", label: "Como Chegar" },
-    { href: "/contato", label: "Contato" },
-  ];
+  if (type === "none") return null;
 
   return (
     <nav
@@ -40,57 +28,72 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Links desktop */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
+          {/* Conteúdo baseado no tipo */}
+          {type === "text" && (
+            <div className="text-white font-semibold text-lg">
+              {config.text}
+            </div>
+          )}
+
+          {type !== "text" && config.links && (
+            <div className="hidden md:flex items-center space-x-8">
+              {config.links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`text-white hover:text-gray-400 px-3 py-2 rounded-md text-md font-semibold transition`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
+
+          <div className="hidden md:flex items-center">
+            {config.rightContent ?? null}
+          </div>
+
+          {type !== "text" && config.links && (
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-white"
+              >
+                {isMobileMenuOpen ? (
+                  <BiX className="text-3xl" />
+                ) : (
+                  <BiMenu className="text-3xl" />
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Menu mobile */}
+      {type !== "text" && config.links && (
+        <div
+          className={`md:hidden transition-all duration-300 ease-in-out px-4 
+          ${
+            isMobileMenuOpen
+              ? "max-h-64 opacity-100"
+              : "max-h-0 opacity-0 overflow-hidden"
+          }`}
+        >
+          <div className="pt-2 pb-3 space-y-1 sm:px-3">
+            {config.links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-white hover:text-gray-400 px-3 py-2 rounded-md text-md font-semibold transition 
-                  ${router.pathname === link.href ? "text-blue-200 underline" : ""}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gray-600 hover:bg-gray-700"
               >
                 {link.label}
               </Link>
             ))}
           </div>
-
-          {/* Botão menu mobile */}
-          <div className="md:hidden flex items-center">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-white"
-            >
-              {isMobileMenuOpen ? (
-                <BiX className="text-3xl" />
-              ) : (
-                <BiMenu className="text-3xl" />
-              )}
-            </button>
-          </div>
         </div>
-      </div>
-
-      {/* Menu mobile */}
-      <div
-        className={`md:hidden transition-all duration-300 ease-in-out px-4 
-          ${isMobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}
-      >
-        <div className="pt-2 pb-3 space-y-1 sm:px-3">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`block px-3 py-2 rounded-md text-base font-medium 
-                ${router.pathname === link.href
-                  ? "text-blue-200 bg-blue-900"
-                  : "text-white hover:text-gray-600 hover:bg-gray-700"}`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </div>
+      )}
     </nav>
   );
 };
