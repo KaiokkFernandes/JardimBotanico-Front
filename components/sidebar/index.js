@@ -21,7 +21,7 @@ const SidebarItem = styled.li`
     }
   }
 `;
-
+ 
 const Sidebar = () => {
   const [exposicao, setExposicao] = useState([]);
 
@@ -52,7 +52,12 @@ const Sidebar = () => {
     <SidebarList>
       {exposicao.map((item, index) => (
         <SidebarItem key={index}>
-          <Link href={`/planta/${index}`} legacyBehavior>
+          <Link href={`/especie/${item.nome_comum
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^\w\s-]/g, "")
+            .replace(/\s+/g, "-")}`} legacyBehavior>
             <a>{item.nome_comum}</a>
           </Link>
         </SidebarItem>
