@@ -4,53 +4,29 @@
       "nome_comum": "Amanita-muscaria",
       "nome_cientifico": "Amanita muscaria",
       "categoria": "Fungo",
-      "imagem": "../Imagens/Amanita_muscaria.jpg",
-      "descricao": "Conhecido pelo seu chapéu vermelho vibrante com pintas brancas, o Amanita muscaria é um dos cogumelos mais icônicos e reconhecíveis do mundo. Apesar da aparência encantadora, é tóxico se ingerido e possui propriedades alucinógenas.",
-      "habitat": "Florestas temperadas do hemisfério norte, especialmente próximo a pinheiros e bétulas.",
-      "curiosidades": [
-        "Era usado por povos indígenas da Sibéria em rituais espirituais.",
-        "Inspirou a criação dos cogumelos nos jogos do Super Mario.",
-        "Possui compostos psicoativos como muscimol e ácido ibotênico."
-      ]
+      "imagem": "/Imagens/Amanita_muscaria.jpg",
+      "texto": "Conhecido pelo seu chapéu vermelho vibrante com pintas brancas, o Amanita muscaria é um dos cogumelos mais icônicos e reconhecíveis do mundo. Apesar da aparência encantadora, é tóxico se ingerido e possui propriedades alucinógenas.\n\nHabitat: Florestas temperadas do hemisfério norte, especialmente próximo a pinheiros e bétulas.\n\nCuriosidades:\n• Era usado por povos indígenas da Sibéria em rituais espirituais.\n• Inspirou a criação dos cogumelos nos jogos do Super Mario.\n• Possui compostos psicoativos como muscimol e ácido ibotênico."
     },
     {
       "nome_comum": "Cogumelo-dourado",
       "nome_cientifico": "Cryptotrama aspratata",
       "categoria": "Fungo",
-      "imagem": "../Imagens/Cryptotrama_aspartata.jpg",
-      "descricao": "Um dos cogumelos mais bonitos da natureza, com coloração amarelo-ouro brilhante. Sua aparência aveludada e luminosa lembra flores tropicais.",
-      "habitat": "Troncos em decomposição em florestas tropicais e subtropicais.",
-      "curiosidades": [
-        "Apesar da aparência atraente, não é comestível.",
-        "Muito raro e difícil de encontrar em ambientes naturais.",
-        "A cor vibrante funciona como defesa contra predadores."
-      ]
+      "imagem": "/Imagens/Cryptotrama_aspartata.jpg",
+      "texto": "Um dos cogumelos mais bonitos da natureza, com coloração amarelo-ouro brilhante. Sua aparência aveludada e luminosa lembra flores tropicais.\n\nHabitat: Troncos em decomposição em florestas tropicais e subtropicais.\n\nCuriosidades:\n• Apesar da aparência atraente, não é comestível.\n• Muito raro e difícil de encontrar em ambientes naturais.\n• A cor vibrante funciona como defesa contra predadores."
     },
     {
       "nome_comum": "Fungo-ondulado",
       "nome_cientifico": "Cymatoderma caperatum",
       "categoria": "Fungo",
-      "imagem": "../Imagens/cymatoderma_caperatum.jpg",
-      "descricao": "Apresenta formas irregulares e onduladas, com textura enrugada que lembra uma escultura natural. Ajuda na decomposição de madeira e reciclagem de nutrientes.",
-      "habitat": "Sobre troncos mortos ou enterrados em florestas úmidas.",
-      "curiosidades": [
-        "É importante para a manutenção do solo fértil.",
-        "Possui compostos com potencial farmacológico.",
-        "Sua estrutura se assemelha a corais marinhos."
-      ]
+      "imagem": "/Imagens/cymatoderma_caperatum.jpg",
+      "texto": "Apresenta formas e onduladas, com textura enrugada que lembra uma escultura natural. Ajuda na decomposição de madeira e reciclagem de nutrientes.\n\nHabitat: Sobre troncos mortos ou enterrados em florestas úmidas.\n\nCuriosidades:\n• É importante para a manutenção do solo fértil.\n• Possui compostos com potencial farmacológico.\n• Sua estrutura se assemelha a corais marinhos."
     },
     {
       "nome_comum": "Fungo-toupeira",
       "nome_cientifico": "Kusaghiporia talpae",
       "categoria": "Fungo",
-      "imagem": "../Imagens/kusaghiporia_talpae.jpg",
-      "descricao": "Fungo raro com aparência resinosa, cresce em locais subterrâneos, geralmente em associação com raízes.",
-      "habitat": "Ambientes úmidos e sombreados, próximo ao solo.",
-      "curiosidades": [
-        "Nome 'talpae' vem da associação com tocas de toupeira.",
-        "Ainda pouco estudado pela ciência.",
-        "Pode desempenhar papel simbiótico com algumas árvores."
-      ]
+      "imagem": "/Imagens/kusaghiporia_talpae.jpg",
+      "texto": "Fungo raro com aparência resinosa, cresce em locais subterrâneos, geralmente em associação com raízes.\n\nHabitat: Ambientes úmidos e sombreados, próximo ao solo.\n\nCuriosidades:\n• Nome 'talpae' vem da associação com tocas de toupeira.\n• Ainda pouco estudado pela ciência.\n• Pode desempenhar papel simbiótico com algumas árvores."
     }
   ],
   "fauna": [
@@ -58,66 +34,36 @@
       "nome_comum": "Bugio-ruivo",
       "nome_cientifico": "Alouatta guariba",
       "categoria": "Mamífero",
-      "imagem": "../Imagens/Bugio-Ruivo.jpg",
-      "descricao": "Esse primata de pelagem avermelhada é conhecido pelo seu potente rugido, que pode ser ouvido a vários quilômetros de distância. Vive em grupos familiares nas copas das árvores e se alimenta de folhas e frutos.",
-      "habitat": "Matas Atlânticas e florestas do sul e sudeste do Brasil.",
-      "curiosidades": [
-        "Seu rugido serve para marcar território e evitar confrontos com outros grupos.",
-        "Possui uma estrutura óssea especial na garganta chamada hióide, que amplifica seu som.",
-        "É um dos maiores primatas das Américas do Sul."
-      ]
+      "imagem": "/Imagens/Bugio-Ruivo.jpg",
+      "texto": "Esse primata de pelagem avermelhada é conhecido pelo seu potente rugido, que pode ser ouvido a vários quilômetros de distância. Vive em grupos familiares nas copas das árvores e se alimenta de folhas e frutos.\n\nHabitat: Matas Atlânticas e florestas do sul e sudeste do Brasil.\n\nCuriosidades:\n• Seu rugido serve para marcar território e evitar confrontos com outros grupos.\n• Possui uma estrutura óssea especial na garganta chamada hióide, que amplifica seu som.\n• É um dos maiores primatas das Américas do Sul."
     },
     {
       "nome_comum": "Pica-pau-verde-barrado",
       "nome_cientifico": "Colaptes melanochloros",
       "categoria": "Ave",
-      "imagem": "../Imagens/Colaptes melanochloros.jpg",
-      "descricao": "Ave de médio porte, com penas esverdeadas e padrão rajado no peito. Diferentemente de outros pica-paus, costuma se alimentar no solo, principalmente de formigas e cupins.",
-      "habitat": "Áreas abertas, campos e bordas de florestas em várias regiões do Brasil.",
-      "curiosidades": [
-        "Tem língua longa e pegajosa ideal para capturar insetos.",
-        "Contribui para o controle de pragas naturais no ambiente.",
-        "Constrói ninhos escavando troncos de árvores."
-      ]
+      "imagem": "/Imagens/Colaptes melanochloros.jpg",
+      "texto": "Ave de médio porte, com penas esverdeadas e padrão rajado no peito. Diferentemente de outros pica-paus, costuma se alimentar no solo, principalmente de formigas e cupins.\n\nHabitat: Áreas abertas, campos e bordas de florestas em várias regiões do Brasil.\n\nCuriosidades:\n• Tem língua longa e pegajosa ideal para capturar insetos.\n• Contribui para o controle de pragas naturais no ambiente.\n• Constrói ninhos escavando troncos de árvores."
     },
     {
       "nome_comum": "Tatu-mulita",
       "nome_cientifico": "Dasypus hybridus",
       "categoria": "Mamífero",
-      "imagem": "../Imagens/Dasypus-hybridus-1.jpg",
-      "descricao": "Pequeno tatu com carapaça segmentada, adaptado para cavar tocas subterrâneas. É ativo principalmente à noite e se alimenta de insetos e raízes.",
-      "habitat": "Campos e cerrados da América do Sul.",
-      "curiosidades": [
-        "Tem excelente olfato para localizar alimento.",
-        "Sua carapaça protege contra predadores.",
-        "É um dos tatus mais ágeis da natureza."
-      ]
+      "imagem": "/Imagens/Dasypus-hybridus-1.jpg",
+      "texto": "Pequeno tatu com carapaça segmentada, adaptado para cavar tocas subterrâneas. É ativo principalmente à noite e se alimenta de insetos e raízes.\n\nHabitat: Campos e cerrados da América do Sul.\n\nCuriosidades:\n• Tem excelente olfato para localizar alimento.\n• Sua carapaça protege contra predadores.\n• É um dos tatus mais ágeis da natureza."
     },
     {
       "nome_comum": "Capivara",
       "nome_cientifico": "Hydrochoerus hydrochaeris",
       "categoria": "Mamífero",
-      "imagem": "../Imagens/Hydrochoerus_hydrochaeris.jpg",
-      "descricao": "É o maior roedor do mundo, com comportamento calmo e social. Vive em grupos e passa grande parte do tempo próximo à água.",
-      "habitat": "Beiras de rios, lagos e áreas alagadas da América do Sul.",
-      "curiosidades": [
-        "É excelente nadadora e pode dormir parcialmente submersa.",
-        "Se comunica por meio de assobios, grunhidos e até latidos.",
-        "É frequentemente vista com aves empoleiradas sobre seu corpo."
-      ]
+      "imagem": "/Imagens/Hydrochoerus_hydrochaeris.jpg",
+      "texto": "É o maior roedor do mundo, com comportamento calmo e social. Vive em grupos e passa grande parte do tempo próximo à água.\n\nHabitat: Beiras de rios, lagos e áreas alagadas da América do Sul.\n\nCuriosidades:\n• É excelente nadadora e pode dormir parcialmente submersa.\n• Se comunica por meio de assobios, grunhidos e até latidos.\n• É frequentemente vista com aves empoleiradas sobre seu corpo."
     },
     {
       "nome_comum": "Quero-quero",
       "nome_cientifico": "Vanellus chilensis",
       "categoria": "Ave",
-      "imagem": "../Imagens/quero-quero.jpg",
-      "descricao": "Ave típica de áreas abertas, conhecida por seu comportamento protetor e grito característico. É muito observada em campos, parques e até em cidades.",
-      "habitat": "Campos abertos, áreas rurais e urbanas de toda a América do Sul.",
-      "curiosidades": [
-        "Defende seus ninhos com coragem, atacando animais e até humanos.",
-        "Faz ninhos no chão, camuflados entre os capins.",
-        "Considerada sentinela natural: alerta outras espécies sobre perigos."
-      ]
+      "imagem": "/Imagens/quero-quero.jpg",
+      "texto": "Ave típica de áreas abertas, conhecida por seu comportamento protetor e grito característico. É muito observada em campos, parques e até em cidades.\n\nHabitat: Campos abertos, áreas rurais e urbanas de toda a América do Sul.\n\nCuriosidades:\n• Defende seus ninhos com coragem, atacando animais e até humanos.\n• Faz ninhos no chão, camuflados entre os capins.\n• Considerada sentinela natural: alerta outras espécies sobre perigos."
     }
   ]
 }

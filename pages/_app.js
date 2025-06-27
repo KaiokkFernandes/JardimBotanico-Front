@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import Navbar from "../components/Navbar/Navbar";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -8,22 +9,25 @@ function MyApp({ Component, pageProps }) {
   let navbarType = "default";
   let navbarConfig = {};
 
+  // Define comportamento especial para algumas rotas
   switch (router.pathname) {
+    case "/auth":
     case "/login":
-      navbarType = "text";
-      navbarConfig = { text: "Bem-vindo! Faça login para continuar." };
-      break;
-
     case "/admin":
+    case "/fullscreen":
       navbarType = "text";
       navbarConfig = {
-        text: "Painel administrativo - Jardim Botânico UFSM",
-        rightContent: <span className="text-white">Admin 🔐</span>,
+        text:
+          router.pathname === "/auth"
+            ? "Bem-vindo! Faça login ou cadastre-se para continuar."
+            : router.pathname === "/login"
+            ? "Bem-vindo! Faça login para continuar."
+            : "Painel administrativo - Jardim Botânico UFSM",
+        rightContent:
+          router.pathname === "/admin" ? (
+            <span className="text-white">Admin 🔐</span>
+          ) : null,
       };
-      break;
-
-    case "/fullscreen":
-      navbarType = "none";
       break;
 
     default:
@@ -35,6 +39,14 @@ function MyApp({ Component, pageProps }) {
           { href: "/comochegar", label: "Como Chegar" },
           { href: "/contato", label: "Contato" },
         ],
+        rightContent: (
+          <Link
+            href="/auth"
+            className="text-white font-medium hover:underline ml-4"
+          >
+            Login
+          </Link>
+        ),
       };
   }
 
