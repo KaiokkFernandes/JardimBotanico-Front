@@ -56,32 +56,27 @@ const Navbar = ({ type = "default", config = {} }) => {
             )}
           </div>
 
-          {/* RIGHT */}
           <div className="hidden md:flex items-center">
             {config.rightContent && (
               <div className="text-white">{config.rightContent}</div>
             )}
           </div>
 
-          {/* MOBILE MENU TOGGLE */}
-          {type === "default" && (
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-white"
-              >
-                {isMobileMenuOpen ? (
-                  <BiX className="text-3xl" />
-                ) : (
-                  <BiMenu className="text-3xl" />
-                )}
-              </button>
-            </div>
-          )}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-white"
+            >
+              {isMobileMenuOpen ? (
+                <BiX className="text-3xl" />
+              ) : (
+                <BiMenu className="text-3xl" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* MOBILE MENU */}
       {type === "default" && (
         <div
           className={`md:hidden transition-all duration-300 ease-in-out px-4 ${
@@ -105,11 +100,6 @@ const Navbar = ({ type = "default", config = {} }) => {
                 {link.label}
               </Link>
             ))}
-            {config.rightContent && (
-              <div className="pt-2 border-t border-gray-600 text-white">
-                {config.rightContent}
-              </div>
-            )}
           </div>
         </div>
       )}
