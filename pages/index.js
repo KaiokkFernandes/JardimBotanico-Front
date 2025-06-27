@@ -8,9 +8,6 @@ import Sidebar from "../components/sidebar";
 function Home() {
   return (
     <div style={{ display: "flex" }}>
-      <div style={{ width: "250px" }}>
-        <Sidebar />
-      </div>
       <div style={{ flex: 1 }}>
         <HeroSection />
         <AboutSection />
