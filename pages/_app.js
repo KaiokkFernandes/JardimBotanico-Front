@@ -9,7 +9,6 @@ function MyApp({ Component, pageProps }) {
   let navbarType = "default";
   let navbarConfig = {};
 
-  // Define comportamento especial para algumas rotas
   switch (router.pathname) {
     case "/auth":
     case "/login":
@@ -38,6 +37,8 @@ function MyApp({ Component, pageProps }) {
           { href: "/regras", label: "Regras do Jardim" },
           { href: "/comochegar", label: "Como Chegar" },
           { href: "/contato", label: "Contato" },
+          { href: "/feed", label: "Conheça as Espécies" },
+
         ],
         rightContent: (
           <Link
