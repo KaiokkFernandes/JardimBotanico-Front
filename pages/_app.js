@@ -1,5 +1,6 @@
 import "../styles/globals.css";
 import Navbar from "../components/Navbar/Navbar";
+import BotaoScanner from "../components/BotaoScanner/BotaoScanner";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
@@ -38,7 +39,6 @@ function MyApp({ Component, pageProps }) {
           { href: "/comochegar", label: "Como Chegar" },
           { href: "/contato", label: "Contato" },
           { href: "/feed", label: "Conheça as Espécies" },
-
         ],
         rightContent: (
           <Link
@@ -55,6 +55,7 @@ function MyApp({ Component, pageProps }) {
     <>
       <Navbar type={navbarType} config={navbarConfig} />
       <Component {...pageProps} />
+      {router.pathname !== "/scanner" && <BotaoScanner />}
     </>
   );
 }

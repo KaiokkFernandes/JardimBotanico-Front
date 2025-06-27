@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",
+    "html5-qrcode": "^2.3.8",
     "next": "^13.1.6",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
