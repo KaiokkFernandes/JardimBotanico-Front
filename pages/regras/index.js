@@ -1,7 +1,7 @@
 export default function RegrasPage() {
   return (
     <div>
-      <section className="min-h-screen w-full bg-[#4E9860] flex items-center justify-center px-4 md:px-20">
+      <section className="min-h-screen w-full bg-[#B1DABB] flex items-center justify-center px-4 md:px-20">
         <div className="flex flex-col md:flex-row items-start gap-8 max-w-6xl">
           <h1 className="text-4xl md:text-7xl pr-5 pt-5 font-semibold text-green-950 whitespace-nowrap">
             Regras do Jardim:
