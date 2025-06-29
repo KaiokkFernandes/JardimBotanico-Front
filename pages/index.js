@@ -5,7 +5,7 @@ import UtilidadesSection from "../components/Forms";
 function Home() {
   return (
     <div style={{ display: "flex" }}>
-      <div style={{ flex: 1 }}>
+      <div>
         <HeroSection />
         <AboutSection />
         <UtilidadesSection />
@@ -13,5 +13,7 @@ function Home() {
     </div>
   );
 }
+
+
 
 export default Home;

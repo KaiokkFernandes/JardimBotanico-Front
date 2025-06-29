@@ -1,8 +1,20 @@
 import "../styles/globals.css";
 import Navbar from "../components/Navbar/Navbar";
 import BotaoScanner from "../components/BotaoScanner/BotaoScanner";
+import Layout from "../components/Layout/index"; 
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { CiUser } from "react-icons/ci";
+import styled from 'styled-components';
+
+const UserIconLink = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+`;
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -41,10 +53,10 @@ function MyApp({ Component, pageProps }) {
           { href: "/feed", label: "Conheça as Espécies" },
         ],
         rightContent: (
-          <Link
-            href="/auth"
-            className="text-white font-medium hover:underline ml-4"
-          >
+         <Link href="/auth">
+            <UserIconLink>
+              <CiUser />
+            </UserIconLink>
             Login
           </Link>
         ),
@@ -54,7 +66,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Navbar type={navbarType} config={navbarConfig} />
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
       {router.pathname !== "/scanner" && <BotaoScanner />}
     </>
   );
