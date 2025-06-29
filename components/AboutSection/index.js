@@ -1,87 +1,97 @@
+// components/AboutSection.jsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 
 const AboutContainer = styled.section`
   padding: 4rem 2rem;
-  background: #f9f9f9;
+  background: linear-gradient(135deg, #5B8266, #212922);
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 3rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  align-items: start;
 `;
 
-const TextContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem; /* Menor espaço entre os elementos */
-`;
-
-const Paragraph = styled.p`
-  font-size: 1.125rem;
-  color: #555;
-  line-height: 1.6; /* Reduzido um pouco também */
-  margin: 0; /* Remove margem extra */
+const TextCard = styled(motion.div)`
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
 `;
 
 const Title = styled.h2`
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  color: #2e3e2f;
 `;
 
-const Subtitle = styled.h3`
-  font-size: 1.75rem;
-  color: #34495e;
-  margin-top: 1rem;
+const Subtitle = styled.h4`
+  margin: 1.5rem 0 0.5rem;
+  font-size: 1.25rem;
+  color: #3b4a3a;
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 40px;
+    height: 4px;
+    background: #79a06e;
+    border-radius: 2px;
+  }
+`;
+
+const Paragraph = styled.p`
+  margin: 0.75rem 0;
+  line-height: 1.6;
+  color: #555;
 `;
 
 const CarouselContainer = styled.div`
   position: relative;
-  width: 100%;
   overflow: hidden;
   border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 `;
 
-const CarouselImage = styled.img`
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  transition: all 0.5s ease-in-out;
-  border-radius: 12px;
+const CarouselInner = styled.div`
+  display: flex;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  &::-webkit-scrollbar { display: none; }
 `;
 
-const CarouselButton = styled.button`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(44, 62, 80, 0.7);
-  border: none;
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  z-index: 10;
-  border-radius: 50%;
-  
-  &:hover {
-    background: rgba(44, 62, 80, 0.9);
+const Slide = styled.div`
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  img {
+    display: block;
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
   }
 `;
 
-const PrevButton = styled(CarouselButton)`
-  left: 10px;
+const NavButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(44,62,80,0.6);
+  border: none;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  &:hover { background: rgba(44,62,80,0.9); }
 `;
+const Prev = styled(NavButton)` left: 10px; `;
+const Next = styled(NavButton)` right: 10px; `;
 
-const NextButton = styled(CarouselButton)`
-  right: 10px;
-`;
-
-const AboutSection = () => {
+export default function AboutSection() {
   const images = [
     '/Imagens/About1.png',
     '/Imagens/About2.png',
@@ -89,48 +99,60 @@ const AboutSection = () => {
     '/Imagens/About4.png',
     '/Imagens/About5.png',
   ];
+  const [index, setIndex] = useState(0);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const prev = () => setIndex(i => (i === 0 ? images.length - 1 : i - 1));
+  const next = () => setIndex(i => (i === images.length - 1 ? 0 : i + 1));
 
-  const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-  };
+  const innerRef = React.useRef();
+  React.useEffect(() => {
+    const el = innerRef.current;
+    if (el) {
+      el.scrollTo({ left: index * el.clientWidth, behavior: 'smooth' });
+    }
+  }, [index]);
 
   return (
     <AboutContainer>
-      <TextContent>
+      <TextCard
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+      >
         <Title>Sobre o Jardim Botânico da UFSM</Title>
-
         <Paragraph>
-          Fundado em 1981, o Jardim Botânico da Universidade Federal de Santa Maria ocupa uma área de 13 hectares dedicada à conservação da biodiversidade e à promoção da educação ambiental.
+          Fundado em 1981, o Jardim Botânico da UFSM ocupa 13 hectares dedicados à
+          conservação da biodiversidade e à promoção da educação ambiental.
         </Paragraph>
-
         <Subtitle>Preservação e Ensino</Subtitle>
         <Paragraph>
-          Abrigando cerca de 2.500 indivíduos de 349 espécies nativas, o Jardim também funciona como um laboratório vivo para atividades de ensino, pesquisa e extensão, recebendo estudantes de diversos cursos.
+          Abriga cerca de 2.500 indivíduos de 349 espécies nativas, servindo como
+          laboratório vivo para pesquisa, ensino e extensão.
         </Paragraph>
-
         <Subtitle>Lazer e Comunidade</Subtitle>
         <Paragraph>
-          O espaço oferece visitas guiadas, trilhas e oficinas de educação ambiental abertas à comunidade, com entrada gratuita e horários específicos. Para grupos escolares ou institucionais, o agendamento é realizado pelo site oficial.
+          Oferece visitas guiadas, trilhas e oficinas gratuitas para a comunidade,
+          com agendamento online disponível para grupos escolares e institucionais.
         </Paragraph>
-
-        <Paragraph>
-          O Jardim Botânico da UFSM representa a união entre conservação ambiental, educação e lazer, fortalecendo a formação acadêmica e a conscientização ecológica.
-        </Paragraph>
-      </TextContent>
+      </TextCard>
 
       <CarouselContainer>
-        <CarouselImage src={images[currentIndex]} alt="Fotos do Jardim Botânico da UFSM" />
-        <PrevButton onClick={goToPrevious}>&#10094;</PrevButton>
-        <NextButton onClick={goToNext}>&#10095;</NextButton>
+        <Prev onClick={prev} aria-label="Anterior">
+          <MdChevronLeft size={24} />
+        </Prev>
+        <Next onClick={next} aria-label="Próxima">
+          <MdChevronRight size={24} />
+        </Next>
+
+        <CarouselInner ref={innerRef}>
+          {images.map((src, i) => (
+            <Slide key={i}>
+              <img src={src} alt={`Jardim Botânico foto ${i + 1}`} />
+            </Slide>
+          ))}
+        </CarouselInner>
       </CarouselContainer>
     </AboutContainer>
   );
-};
-
-export default AboutSection;
+}
