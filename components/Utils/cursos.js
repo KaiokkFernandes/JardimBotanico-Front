@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const Label = styled.label`
   display: block;
@@ -28,24 +28,25 @@ const Container = styled.div`
   }
 `;
 
-
-const CampoCurso = () => {
+const CampoCurso = ({ value, onChange }) => {
   const [cursos, setCursos] = useState([]);
 
   useEffect(() => {
     const fetchCursos = async () => {
       try {
-        const response = await fetch('/Data/cursos.json');
+        const response = await fetch("/Data/cursos.json");
         const data = await response.json();
 
         const presenciais = Object.values(data.cursos_presenciais).flat();
         const aDistancia = data.educacao_a_distancia;
         const outros = data.outros;
 
-        const todosCursos = [...new Set([...presenciais, ...aDistancia, ...outros])].sort();
+        const todosCursos = [
+          ...new Set([...presenciais, ...aDistancia, ...outros]),
+        ].sort();
         setCursos(todosCursos);
       } catch (error) {
-        console.error('Erro ao carregar cursos:', error);
+        console.error("Erro ao carregar cursos:", error);
       }
     };
 
@@ -55,7 +56,13 @@ const CampoCurso = () => {
   return (
     <Container>
       <Label htmlFor="curso">Curso (Caso seja estudante):</Label>
-      <Input list="lista-cursos" name="curso" id="curso" required />
+      <Input
+        list="lista-cursos"
+        name="curso"
+        id="curso"
+        value={value}
+        onChange={onChange}
+      />
       <datalist id="lista-cursos">
         {cursos.map((curso) => (
           <option key={curso} value={curso} />

@@ -111,6 +111,7 @@ export async function fetchVisitaById(id) {
 }
 // cria um formulario de visita
 export async function createVisita(data) {
+  console.log("oiie", data);
   const res = await fetch(`${BASE_URL}/visitas`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

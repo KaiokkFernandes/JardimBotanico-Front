@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import CampoCurso from "../Utils/cursos";
+import { createVisita } from "../API/api";
+
 const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
@@ -12,6 +14,18 @@ const FormWrapper = styled.form`
   max-width: 800px;
   margin: 0 auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const Select = styled.select`
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: #2e7d32;
+  }
 `;
 
 const Header = styled.h2`
@@ -37,6 +51,7 @@ const Input = styled.input`
     border-color: #2e7d32;
   }
 `;
+
 const LinhaFlex = styled.div`
   display: flex;
   gap: 1rem;
@@ -46,6 +61,7 @@ const LinhaFlex = styled.div`
     flex-direction: column;
   }
 `;
+
 const Button = styled.button`
   padding: 0.75rem;
   border: none;
@@ -81,12 +97,23 @@ const ButtonVoltar = styled(Button)`
 `;
 
 const FormularioInformacaoVisita = () => {
+  const [formData, setFormData] = useState({
+    nome: "",
+    genero: "",
+    acompanhantes: "1",
+    curso: "",
+    proposito: "",
+    estado: "",
+    cidade: "",
+  });
+
   const [estados, setEstados] = useState([]);
   const [estadoInput, setEstadoInput] = useState("");
   const [estadoSelecionado, setEstadoSelecionado] = useState(null);
 
   const [cidades, setCidades] = useState([]);
   const [cidadeInput, setCidadeInput] = useState("");
+  const [cidadeSelecionada, setCidadeSelecionada] = useState(null);
 
   useEffect(() => {
     fetch(
@@ -108,17 +135,82 @@ const FormularioInformacaoVisita = () => {
     } else {
       setCidades([]);
       setCidadeInput("");
+      setCidadeSelecionada(null);
     }
   }, [estadoSelecionado]);
 
-  const handleEstadoChange = (e) => {
-    setEstadoSelecionado(e.target.value);
-    setCidadeSelecionada("");
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleEstadoInputChange = (e) => {
+    const val = e.target.value;
+    setEstadoInput(val);
+    setEstadoSelecionado(null);
+    setFormData((prev) => ({ ...prev, estado: "" }));
+    setCidadeInput("");
+    setCidadeSelecionada(null);
+    setFormData((prev) => ({ ...prev, cidade: "" }));
+  };
+
+  const handleEstadoSelect = (estado) => {
+    setEstadoInput(estado.nome);
+    setEstadoSelecionado(estado);
+    setFormData((prev) => ({ ...prev, estado: estado.nome }));
+    setCidadeInput("");
+    setCidadeSelecionada(null);
+    setFormData((prev) => ({ ...prev, cidade: "" }));
+  };
+
+  const handleCidadeInputChange = (e) => {
+    const val = e.target.value;
+    setCidadeInput(val);
+    setCidadeSelecionada(null);
+    setFormData((prev) => ({ ...prev, cidade: "" }));
+  };
+
+  const handleCidadeSelect = (cidade) => {
+    setCidadeInput(cidade.nome);
+    setCidadeSelecionada(cidade);
+    setFormData((prev) => ({ ...prev, cidade: cidade.nome }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Formulário de visita enviado");
+
+    const dataToSend = {
+      visitor_name: formData.nome.toUpperCase(),
+      gender: formData.genero,
+      group_size: parseInt(formData.acompanhantes, 10),
+      course: formData.curso.toUpperCase(),
+      purpose: formData.proposito.toUpperCase(),
+      state: formData.estado.toUpperCase(),
+      city: formData.cidade.toUpperCase(),
+      country: "BRAZIL",
+    };
+
+    try {
+      await createVisita(dataToSend);
+      alert("Formulário enviado com sucesso!");
+      // Se quiser limpar o form:
+      setFormData({
+        nome: "",
+        genero: "",
+        acompanhantes: "1",
+        curso: "",
+        proposito: "",
+        estado: "",
+        cidade: "",
+      });
+      setEstadoInput("");
+      setEstadoSelecionado(null);
+      setCidadeInput("");
+      setCidadeSelecionada(null);
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao enviar formulário");
+    }
   };
 
   const handleVoltar = () => {
@@ -130,35 +222,63 @@ const FormularioInformacaoVisita = () => {
   return (
     <FormWrapper onSubmit={handleSubmit}>
       <Header>Formulário de Informações de Visita</Header>
+
       <LinhaFlex>
         <Container>
           <Label htmlFor="nome">Nome completo:</Label>
-          <Input type="text" id="nome" name="nome" required />
-        </Container>
-
-        <Container>
-          <Label htmlFor="acompanhantes">Quantidade de pessoas no grupo:</Label>
           <Input
-            type="number"
-            id="acompanhantes"
-            name="acompanhantes"
-            min={1}
+            type="text"
+            id="nome"
+            name="nome"
+            value={formData.nome}
+            onChange={handleChange}
             required
           />
         </Container>
-      </LinhaFlex>
-      <LinhaFlex>
+
         <Container>
+          <Label htmlFor="genero">Gênero:</Label>
+          <Select
+            id="genero"
+            name="genero"
+            value={formData.genero}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled>
+              Selecione
+            </option>
+            <option value="FEMININO">Feminino</option>
+            <option value="MASCULINO">Masculino</option>
+            <option value="OUTRO">Outro</option>
+          </Select>
+        </Container>
+      </LinhaFlex>
+
+      <Container>
+        <Label htmlFor="acompanhantes">Quantidade de pessoas no grupo:</Label>
+        <Input
+          type="number"
+          id="acompanhantes"
+          name="acompanhantes"
+          min={1}
+          value={formData.acompanhantes}
+          onChange={handleChange}
+          required
+        />
+      </Container>
+
+      <LinhaFlex>
+        <Container style={{ position: "relative" }}>
           <Label htmlFor="estado">Estado:</Label>
           <Input
             id="estado"
+            name="estado"
             value={estadoInput}
-            onChange={(e) => {
-              setEstadoInput(e.target.value);
-              setEstadoSelecionado(null); // reseta a cidade
-            }}
+            onChange={handleEstadoInputChange}
             placeholder="Digite o estado"
             autoComplete="off"
+            required
           />
           {estadoInput && !estadoSelecionado && (
             <ul
@@ -167,6 +287,12 @@ const FormularioInformacaoVisita = () => {
                 maxHeight: "150px",
                 overflowY: "auto",
                 backgroundColor: "#fff",
+                position: "absolute",
+                width: "100%",
+                zIndex: 10,
+                marginTop: 0,
+                paddingLeft: 0,
+                listStyleType: "none",
               }}
             >
               {estados
@@ -177,10 +303,7 @@ const FormularioInformacaoVisita = () => {
                   <li
                     key={estado.id}
                     style={{ padding: "4px", cursor: "pointer" }}
-                    onClick={() => {
-                      setEstadoInput(estado.nome);
-                      setEstadoSelecionado(estado);
-                    }}
+                    onClick={() => handleEstadoSelect(estado)}
                   >
                     {estado.nome}
                   </li>
@@ -189,23 +312,31 @@ const FormularioInformacaoVisita = () => {
           )}
         </Container>
 
-        <Container>
+        <Container style={{ position: "relative" }}>
           <Label htmlFor="cidade">Cidade:</Label>
           <Input
             id="cidade"
+            name="cidade"
             value={cidadeInput}
-            onChange={(e) => setCidadeInput(e.target.value)}
+            onChange={handleCidadeInputChange}
             disabled={!estadoSelecionado}
             placeholder="Digite a cidade"
             autoComplete="off"
+            required
           />
-          {cidadeInput && (
+          {cidadeInput && !cidadeSelecionada && (
             <ul
               style={{
                 border: "1px solid #ccc",
                 maxHeight: "150px",
                 overflowY: "auto",
                 backgroundColor: "#fff",
+                position: "absolute",
+                width: "100%",
+                zIndex: 10,
+                marginTop: 0,
+                paddingLeft: 0,
+                listStyleType: "none",
               }}
             >
               {cidades
@@ -216,7 +347,7 @@ const FormularioInformacaoVisita = () => {
                   <li
                     key={cidade.id}
                     style={{ padding: "4px", cursor: "pointer" }}
-                    onClick={() => setCidadeInput(cidade.nome)}
+                    onClick={() => handleCidadeSelect(cidade)}
                   >
                     {cidade.nome}
                   </li>
@@ -225,7 +356,27 @@ const FormularioInformacaoVisita = () => {
           )}
         </Container>
       </LinhaFlex>
-      <CampoCurso />
+
+      <CampoCurso
+        value={formData.curso}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, curso: e.target.value }))
+        }
+      />
+
+      <Container>
+        <Label htmlFor="proposito">Propósito da visita:</Label>
+        <Input
+          type="text"
+          id="proposito"
+          name="proposito"
+          maxLength={100}
+          placeholder="Digite o propósito da visita"
+          value={formData.proposito}
+          onChange={handleChange}
+          required
+        />
+      </Container>
 
       <Container>
         <Label htmlFor="data">Data da visita:</Label>
@@ -235,6 +386,8 @@ const FormularioInformacaoVisita = () => {
           name="data"
           defaultValue={dataAtual}
           required
+          onChange={() => {}}
+          disabled
         />
       </Container>
 
