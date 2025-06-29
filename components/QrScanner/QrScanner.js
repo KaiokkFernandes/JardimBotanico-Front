@@ -11,27 +11,21 @@ export default function QrScanner() {
       html5QrCode = new Html5Qrcode("qr-reader");
 
       try {
-        const cameras = await Html5Qrcode.getCameras();
-        if (!cameras.length) throw new Error("Nenhuma câmera encontrada");
-
-        const cameraId = cameras[0].id;
+        const cams = await Html5Qrcode.getCameras();
+        if (!cams.length) throw new Error("Nenhuma câmera encontrada");
+        const cameraId = cams[0].id;
         await html5QrCode.start(
           cameraId,
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-          },
-          (decodedText) => {
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          (decoded) => {
             try {
-              const url = new URL(decodedText);
+              const url = new URL(decoded);
               window.location.href = url.href;
             } catch {
               alert("QR inválido");
             }
           },
-          (errorMessage) => {
-            console.warn("Scan error:", errorMessage);
-          }
+          (err) => console.warn("Scan error:", err)
         );
       } catch (err) {
         alert("Erro ao acessar câmera: " + err.message);
@@ -40,10 +34,7 @@ export default function QrScanner() {
 
     return () => {
       if (html5QrCode) {
-        html5QrCode
-          .stop()
-          .then(() => html5QrCode.clear())
-          .catch(() => {});
+        html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
       }
     };
   }, []);
@@ -57,20 +48,35 @@ export default function QrScanner() {
         </h1>
       </div>
       <style jsx global>{`
+        /* Preenche o container inteiro */
+        #qr-reader,
+        #qr-reader .html5-qrcode {
+          position: absolute !important;
+          inset: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        /* Vídeo e canvas cobrem tudo mantendo proporção */
+        #qr-reader video,
+        #qr-reader canvas {
+          object-fit: cover !important;
+          width: 100% !important;
+          height: 100% !important;
+        }
+
+        /* Seu frame customizado */
         .html5-qrcode .qrbox {
           border: 2px solid #79A06E !important;
           border-radius: 8px !important;
           overflow: hidden !important;
           position: relative !important;
         }
-
         .html5-qrcode .qrbox::after {
           content: "";
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 3px;
+          top: 0; left: 0;
+          width: 100%; height: 3px;
           background: linear-gradient(
             to bottom,
             rgb(121, 160, 110),
@@ -80,20 +86,10 @@ export default function QrScanner() {
           box-shadow: 0 0 10px 4px rgba(5, 101, 32, 0.6);
           animation: scanAnim 2.5s ease-in-out infinite;
         }
-
         @keyframes scanAnim {
-          0% {
-            transform: translateY(0%);
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(100%);
-            opacity: 0.6;
-          }
-          100% {
-            transform: translateY(0%);
-            opacity: 0.9;
-          }
+          0%   { transform: translateY(0%);   opacity: 1; }
+          50%  { transform: translateY(100%); opacity: 0.6; }
+          100% { transform: translateY(0%);   opacity: 0.9; }
         }
       `}</style>
     </div>

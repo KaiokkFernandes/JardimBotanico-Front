@@ -53,11 +53,10 @@ function MyApp({ Component, pageProps }) {
           { href: "/feed", label: "Conheça as Espécies" },
         ],
         rightContent: (
-         <Link href="/auth">
+          <Link href="/auth">
             <UserIconLink>
               <CiUser />
             </UserIconLink>
-            Login
           </Link>
         ),
       };

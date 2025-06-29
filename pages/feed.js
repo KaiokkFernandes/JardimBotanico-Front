@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import ModalEspecie from "../components/ModalEspecie/ModalEspecie";
 import { normalizarNome } from "../components/Utils/normalizarNome";
 
@@ -7,121 +8,112 @@ export default function Feed() {
   const router = useRouter();
   const [todasEspecies, setTodasEspecies] = useState([]);
   const [busca, setBusca] = useState("");
-  const [hoverEspecie, setHoverEspecie] = useState(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const carregar = async () => {
-      try {
-        const res = await fetch("/Data/data.json");
-        const json = await res.json();
-        const todas = [...(json.flora || []), ...(json.fauna || [])];
-        setTodasEspecies(todas);
-      } catch (error) {
-        console.error("Erro ao carregar data.json:", error);
-      }
-    };
-    carregar();
+    fetch("/Data/data.json")
+      .then((res) => res.json())
+      .then((json) =>
+        setTodasEspecies([...(json.flora || []), ...(json.fauna || [])])
+      )
+      .catch((err) => console.error("Erro ao carregar data.json:", err))
+      .finally(() => setLoading(false));
   }, []);
 
-  const abrirModal = (nome) => {
-    router.push(`/especie/${nome}`, undefined, { shallow: true });
-  };
-
-  const fecharModal = () => {
+  const abrirModal = useCallback(
+    (nome) => {
+      router.push(`/feed?especie=${nome}`, undefined, { shallow: true });
+    },
+    [router]
+  );
+  const fecharModal = useCallback(() => {
     router.push("/feed", undefined, { shallow: true });
-  };
+  }, [router]);
 
-  const nomeEspecieNaURL = router.asPath.startsWith("/especie/")
-    ? router.asPath.replace("/especie/", "")
-    : null;
+  const nomeEspecieNaURL = router.query.especie || null;
 
   const especiesFiltradas = todasEspecies.filter((especie) =>
     normalizarNome(especie.nome_comum).includes(normalizarNome(busca))
   );
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <span className="text-green-900 font-semibold">Carregando espécies…</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#B1DABB] p-6 relative overflow-x-hidden">
-      <h1 className="text-4xl font-bold text-center mb-6 text-green-900">
+    <div className="min-h-screen bg-gradient-to-b from-[#AEF6C7] to-[#5B8266] p-4 sm:p-6 md:p-8">
+      <h1 className="text-3xl md:text-4xl font-extrabold text-[#212922] text-center mb-6">
         Conheça as Espécies
+        <span className="block w-16 h-1 bg-[#294936] rounded-full mt-2 mx-auto" />
       </h1>
 
-      <div className="max-w-xl mx-auto mb-8">
-        <input
-          type="text"
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar por nome comum..."
-          
-          className="
-          w-full p-3 rounded-lg border border-green-900 outline outline-1 
-          outline-green-900 shadow-sm focus:outline-2 focus:outline-green-900 
-          focus:border-green-900 text-gray-800 placeholder-green-900
-          "
-        />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {especiesFiltradas.map((especie) => (
-          <div
-            key={especie.nome_comum}
-            onClick={() =>
-              abrirModal(normalizarNome(especie.nome_comum))
-            }
-            onMouseEnter={() => setHoverEspecie(especie)}
-            onMouseLeave={() => setHoverEspecie(null)}
-            onMouseMove={(e) =>
-              setMousePos({ x: e.clientX + 20, y: e.clientY + 20 })
-            }
-            className="bg-white rounded-xl shadow-lg cursor-pointer hover:scale-105 transition p-4"
-          >
-            <img
-              src={especie.imagem}
-              alt={especie.nome_comum}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
-            <h2 className="text-xl font-semibold text-black">
-              {especie.nome_comum}
-            </h2>
-            <p className="text-gray-700 italic">{especie.nome_cientifico}</p>
-            <p className="text-sm text-gray-600 mt-1">{especie.categoria}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Tooltip flutuante que segue o mouse */}
-      {hoverEspecie && (
-        <div
-          className="hidden md:block fixed z-50 bg-white rounded-2xl shadow-2xl p-4 w-80 transition-opacity duration-200 pointer-events-none"
-          style={{
-            top: `${mousePos.y}px`,
-            left: `${mousePos.x}px`,
-            transform: "translate(0, 0)", // opcional: ajuste fino
-          }}
-        >
-          <img
-            src={hoverEspecie.imagem}
-            alt={hoverEspecie.nome_comum}
-            className="w-full h-32 object-cover rounded-lg mb-3"
+      <div className="max-w-md mx-auto mb-8">
+        <div className="relative">
+          <input
+            type="text"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar por nome comum..."
+            className="
+              w-full pl-4 pr-12 py-3 rounded-full border-2 border-[#3E6259]
+              focus:outline-none focus:ring-2 focus:ring-[#3E6259]
+              text-[#212922] placeholder-[#3E6259] font-medium
+            "
           />
-          <h3 className="text-lg font-bold text-black mb-1">
-            {hoverEspecie.nome_comum}
-          </h3>
-          <p className="text-sm italic text-gray-700 mb-2">
-            {hoverEspecie.nome_cientifico}
-          </p>
-          <p className="text-sm text-gray-700 whitespace-pre-line line-clamp-5">
-            {hoverEspecie.texto}
-          </p>
-          <button
-            onClick={() =>
-              abrirModal(normalizarNome(hoverEspecie.nome_comum))
-            }
-            className="mt-3 bg-green-800 text-white px-3 py-1 rounded hover:bg-green-900 transition"
+          <svg
+            className="w-5 h-5 absolute right-4 top-1/2 transform -translate-y-1/2 text-[#3E6259]"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none" viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            Ver mais
-          </button>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M21 21l-4.35-4.35M6.5 11a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0z" />
+          </svg>
         </div>
+      </div>
+
+      {especiesFiltradas.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {especiesFiltradas.map((especie) => {
+            const key = normalizarNome(especie.nome_comum);
+            return (
+              <div
+                key={key}
+                onClick={() => abrirModal(key)}
+                className="
+                  bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer
+                  transform hover:-translate-y-1 hover:scale-[1.02]
+                  transition duration-300 ease-out
+                "
+              >
+                <div className="relative w-full h-48">
+                  <Image
+                    src={especie.imagem}
+                    alt={especie.nome_comum}
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <h2 className="text-lg font-bold text-[#212922] mb-1 border-b-2 border-[#5B8266] inline-block">
+                    {especie.nome_comum}
+                  </h2>
+                  <p className="text-sm italic text-gray-600 mt-1">
+                    {especie.nome_cientifico}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="text-center text-[#212922] font-medium mt-12">
+          Nenhuma espécie encontrada para “{busca}”.
+        </p>
       )}
 
       {nomeEspecieNaURL && (

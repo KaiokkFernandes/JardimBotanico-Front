@@ -1,15 +1,16 @@
+import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback
+} from "react";
+import Image from "next/image";
 import { QRCodeCanvas } from "qrcode.react";
-import { ChevronDown } from "lucide-react"; // ícone da seta (instale lucide-react se quiser algo leve)
-
-const normalizarNome = (str) =>
-  str
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-");
+import { ChevronDown, Copy } from "lucide-react";
+import { normalizarNome } from "../../components/Utils/normalizarNome";
 
 export default function DetalhesEspecie() {
   const router = useRouter();
@@ -26,85 +27,114 @@ export default function DetalhesEspecie() {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("/Data/data.json");
-      const data = await res.json();
-      const todas = [...(data.flora || []), ...(data.fauna || [])];
-      const item = todas.find((e) => normalizarNome(e.nome_comum) === nome);
-      setEspecie(item);
-    };
-    if (nome) fetchData();
+    if (!nome) return;
+    fetch("/Data/data.json")
+      .then(res => res.json())
+      .then(data => {
+        const all = [...(data.flora || []), ...(data.fauna || [])];
+        setEspecie(all.find(e => normalizarNome(e.nome_comum) === nome) || null);
+      })
+      .catch(console.error);
   }, [nome]);
 
   useEffect(() => {
     const el = textoRef.current;
     if (!el) return;
-
-    const updateArrow = () => {
+    const onScroll = () => {
       setShowArrow(el.scrollTop + el.clientHeight < el.scrollHeight - 10);
     };
-
-    updateArrow();
-    el.addEventListener("scroll", updateArrow);
-    return () => el.removeEventListener("scroll", updateArrow);
+    el.addEventListener("scroll", onScroll);
+    onScroll();
+    return () => el.removeEventListener("scroll", onScroll);
   }, [especie]);
 
-  if (!especie) return <p className="p-8">Carregando...</p>;
+  const paragraphs = useMemo(() => {
+    if (!especie) return [];
+    return especie.texto.trim().split("\n\n").filter(p => p);
+  }, [especie]);
+
+  const scrollDownTwoLines = useCallback(() => {
+    const el = textoRef.current;
+    if (!el) return;
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
+    el.scrollBy({ top: lineHeight * 2, behavior: "smooth" });
+  }, []);
+
+  if (!especie) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-[#212922] font-medium">Carregando…</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen w-full bg-[#B1DABB] flex flex-col items-center justify-center px-4 md:px-20 py-16">
-      <div className="max-w-6xl w-full flex flex-col md:flex-row items-start justify-center gap-12 relative">
-        <div className="flex flex-col items-center space-y-4 md:w-1/2">
-          <div className="w-full max-w-[700px] aspect-[16/10] overflow-hidden rounded-[36px] drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)]">
-            <img
-              src={especie.imagem.replace("..", "")}
-              alt={especie.nome_comum}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="text-4xl md:text-5xl font-semibold text-black drop-shadow text-center">
-            {especie.nome_comum}
-          </div>
-          <div className="text-3xl font-semibold text-black drop-shadow text-center">
-            ({especie.nome_cientifico})
-          </div>
-        </div>
+    <>
+      <Head>
+        <title>{especie.nome_comum} — Jardim Botânico UFSM</title>
+        <meta
+          name="description"
+          content={paragraphs[0]?.slice(0, 150) || "Detalhes da espécie"}
+        />
+      </Head>
 
-        <div className="hidden md:block w-[1px] bg-green-900 self-stretch"></div>
-        <div className="block md:hidden h-[1px] bg-green-900 w-full my-4"></div>
-
-
-        <div className="relative md:w-1/2 max-w-[700px] w-full">
-          <div
-            ref={textoRef}
-            className="bg-white rounded-2xl shadow-lg px-6 py-4 text-lg text-black text-justify leading-relaxed
-                       whitespace-pre-wrap break-words max-h-[18rem] overflow-y-auto pr-4"
-          >
-            {especie.texto
-              .trim()
-              .split("\n\n")
-              .map((paragrafo, idx) => (
-                <p key={idx} className="mb-4">
-                  {paragrafo}
-                </p>
-              ))}
-          </div>
-
-          {showArrow && (
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 pointer-events-none">
-              <div className="bg-[#B1DABB] rounded-full shadow-md p-2 animate-bounce">
-                <ChevronDown className="w-10 h-10 text-green-900" />
-              </div>
+      <article className="min-h-screen bg-[#B1DABB] flex flex-col items-center py-16 px-4 md:px-20">
+        <header className="w-full max-w-6xl flex flex-col md:flex-row gap-12">
+          <figure className="md:w-1/2 w-full flex flex-col items-center">
+            <div className="relative w-full aspect-[16/10] rounded-3xl overflow-hidden shadow-xl">
+              <Image
+                src={especie.imagem.replace("..", "")}
+                alt={especie.nome_comum}
+                layout="fill"
+                objectFit="cover"
+              />
             </div>
-          )}
-        </div>
-      </div>
+            <figcaption className="mt-6 text-center">
+              <h1 className="text-4xl md:text-5xl font-semibold text-[#212922]">
+                {especie.nome_comum}
+              </h1>
+              <p className="text-2xl italic text-gray-700 mt-1">
+                ({especie.nome_cientifico})
+              </p>
+            </figcaption>
+          </figure>
 
-      {currentUrl && (
-        <div className="mt-12 flex flex-col items-center">
-          <QRCodeCanvas value={currentUrl} size={128} />
-        </div>
-      )}
-    </div>
+          <div className="hidden md:block w-px bg-[#212922]" aria-hidden />
+
+          <section className="md:w-1/2 w-full">
+            <div className="relative">
+              <div
+                ref={textoRef}
+                className="bg-white rounded-3xl p-6 text-lg leading-relaxed max-h-72 overflow-y-auto pr-4 text-justify"
+              >
+                {paragraphs.map((p, i) => (
+                  <p key={i} className="mb-4">{p}</p>
+                ))}
+              </div>
+              {showArrow && (
+                <button
+                  onClick={scrollDownTwoLines}
+                  className="absolute bottom-4 right-4 bg-white bg-opacity-80 rounded-full p-2 shadow-md hover:bg-opacity-100 transition"
+                  aria-label="Descer texto"
+                >
+                  <ChevronDown size={24} className="text-[#212922]" />
+                </button>
+              )}
+            </div>
+          </section>
+        </header>
+
+        <footer className="mt-12 flex flex-col items-center space-y-4">
+          <QRCodeCanvas value={currentUrl} size={128} fgColor="#212922" />
+          <button
+            onClick={() => navigator.clipboard.writeText(currentUrl)}
+            className="flex items-center space-x-2 text-[#3E6259] hover:text-[#294936] focus:outline-none"
+          >
+            <Copy size={20} />
+            <span className="font-medium">Copiar link</span>
+          </button>
+        </footer>
+      </article>
+    </>
   );
 }

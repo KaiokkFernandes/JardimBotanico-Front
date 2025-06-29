@@ -1,92 +1,90 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { normalizarNome } from "../Utils/normalizarNome";
-
+import { motion } from "framer-motion";
 
 export default function ModalEspecie({ nome, onClose }) {
+  const router = useRouter();
   const [especie, setEspecie] = useState(null);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
-    const carregar = async () => {
-      try {
-        const res = await fetch("/Data/data.json");
-        const json = await res.json();
-        const todas = [...(json.flora || []), ...(json.fauna || [])];
-        const encontrada = todas.find(
+    fetch("/Data/data.json")
+      .then((res) => res.json())
+      .then((json) => {
+        const all = [...(json.flora || []), ...(json.fauna || [])];
+        const found = all.find(
           (e) => normalizarNome(e.nome_comum) === nome
         );
-        setEspecie(encontrada);
-      } catch (error) {
-        console.error("Erro ao carregar os dados da espécie:", error);
-      }
-    };
-    carregar();
+        setEspecie(found);
+      })
+      .catch((err) => console.error("Erro ao buscar espécie:", err));
   }, [nome]);
 
   if (!especie) return null;
 
-  const textoTemMaisDe20Linhas = especie.texto.trim().split("\n").length > 20;
+  const handleOverlayClick = () => {
+    if (isNavigating) return;
+    onClose();
+  };
 
-  const handleBackdropClick = (e) => {
-    if (e.target.id === "modal-backdrop") {
-      onClose();
-    }
+  const handleContentClick = (e) => {
+    e.stopPropagation();
+    setIsNavigating(true);
   };
 
   return (
-    <div
-      id="modal-backdrop"
-      onClick={handleBackdropClick}
-      className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center px-4 overflow-y-auto"
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#212922]/40 backdrop-blur-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      onClick={handleOverlayClick}
     >
-      <div className="bg-[#B1DABB] rounded-3xl p-6 max-w-6xl w-full relative">
+      <motion.div
+        className="relative bg-white rounded-xl p-6 shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={ isNavigating 
+          ? { scale: 1.1, opacity: 0 }  
+          : { scale: 1, opacity: 1 }    
+        }
+        transition={{ duration: 0.3 }}
+        onAnimationComplete={() => {
+          if (isNavigating) {
+            router.push(`/especie/${nome}`);
+          }
+        }}
+        onClick={handleContentClick}
+      >
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-black text-3xl font-bold"
-          aria-label="Fechar modal"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          aria-label="Fechar"
+          className="absolute top-4 right-4 text-2xl font-bold text-[#294936] hover:text-[#3E6259]"
         >
           ×
         </button>
-
-        <div
-          className={`flex ${
-            textoTemMaisDe20Linhas ? "flex-col" : "flex-col md:flex-row"
-          } items-start md:items-center justify-center gap-8`}
-        >
-          <div className="flex flex-col items-center space-y-4 md:w-1/2">
-            <img
-              src={especie.imagem}
-              alt={especie.nome_comum}
-              className="w-full max-w-[700px] h-auto rounded-[36px] drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)]"
-            />
-            <div className="text-4xl md:text-5xl font-semibold text-black text-center">
-              {especie.nome_comum}
-            </div>
-            <div className="text-2xl font-semibold text-black text-center">
-              ({especie.nome_cientifico})
-            </div>
-          </div>
-
-          {textoTemMaisDe20Linhas ? (
-            <div className="h-[1px] bg-green-900 w-full my-4" />
-          ) : (
-            <>
-              <div className="hidden md:block w-[1px] bg-green-900 self-stretch"></div>
-              <div className="block md:hidden h-[1px] bg-green-900 w-full my-4"></div>
-            </>
-          )}
-
-          <div className="md:w-1/2 text-lg text-black text-justify leading-relaxed whitespace-pre-line px-2 max-w-[700px] mx-auto">
-            {especie.texto
-              .trim()
-              .split("\n\n")
-              .map((paragrafo, idx) => (
-                <p key={idx} className="mb-4">
-                  {paragrafo}
-                </p>
-              ))}
-          </div>
-        </div>
-      </div>
-    </div>
+        <h2 className="text-2xl font-bold mb-2 text-[#212922]">
+          {especie.nome_comum}
+        </h2>
+        <p className="italic text-gray-600 mb-4">
+          {especie.nome_cientifico}
+        </p>
+        <img
+          src={especie.imagem}
+          alt={especie.nome_comum}
+          className="w-full h-48 object-cover rounded mb-4"
+        />
+        <p className="text-gray-700 whitespace-pre-line mb-4">
+          {especie.texto}
+        </p>
+        <p className="text-sm text-center text-[#3E6259] font-medium">
+          (Toque dentro deste card para ver a página completa)
+        </p>
+      </motion.div>
+    </motion.div>
   );
 }
