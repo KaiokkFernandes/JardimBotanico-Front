@@ -14,7 +14,6 @@ export default function QrScanner() {
         const cameras = await Html5Qrcode.getCameras();
         if (!cameras.length) throw new Error("Nenhuma câmera encontrada");
 
-        // use the first available camera
         const cameraId = cameras[0].id;
         await html5QrCode.start(
           cameraId,
