@@ -1,22 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function QrScanner() {
+  const qrRef = useRef(null);
+
   useEffect(() => {
     let html5QrCode;
 
     const startScanner = async () => {
       if (typeof window === "undefined" || !navigator.mediaDevices) return;
 
+      const { Html5Qrcode } = await import("html5-qrcode");
+
+      html5QrCode = new Html5Qrcode("qr-reader");
+
       try {
-        const { Html5Qrcode } = await import("html5-qrcode");
-
-        html5QrCode = new Html5Qrcode("qr-reader");
-
         const cameras = await Html5Qrcode.getCameras();
 
         if (cameras && cameras.length) {
           await html5QrCode.start(
-            { facingMode: "environment" }, // usa a traseira no celular
+            { facingMode: "environment" },
             {
               fps: 10,
               qrbox: { width: 250, height: 250 },
@@ -37,43 +39,39 @@ export default function QrScanner() {
           alert("Nenhuma câmera encontrada.");
         }
       } catch (err) {
-        console.error("Erro ao acessar a câmera:", err);
-        alert("Erro ao acessar a câmera: " + err.message);
+        console.error("Erro ao iniciar câmera:", err);
+        alert("Erro ao iniciar a câmera: " + err.message);
       }
     };
 
-    startScanner();
+    if (qrRef.current) {
+      startScanner();
+    }
 
     return () => {
       if (html5QrCode) {
-        html5QrCode.stop().then(() => {
-          html5QrCode.clear();
-        });
+        html5QrCode.stop().then(() => html5QrCode.clear());
       }
     };
   }, []);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-black">
-      <div id="qr-reader" className="absolute inset-0 z-0" />
-
-      {/* Overlay */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <div className="w-full h-full relative bg-black bg-opacity-60">
+    <div className="relative w-screen h-screen bg-black text-white">
+      <div
+        ref={qrRef}
+        id="qr-reader"
+        className="absolute inset-0 z-10"
+        style={{ width: "100%", height: "100%" }}
+      />
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <div className="w-full h-full relative bg-black bg-opacity-50">
           <div className="absolute top-1/2 left-1/2 w-[250px] h-[250px] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-green-400 overflow-hidden">
             <div className="scanner-line absolute left-0 w-full h-[3px]" />
           </div>
-          <div
-            className="absolute top-1/2 left-1/2 w-[250px] h-[250px] -translate-x-1/2 -translate-y-1/2"
-            style={{
-              boxShadow: "0 0 0 9999px rgba(6, 60, 34, 0.5)",
-              borderRadius: "8px",
-            }}
-          />
         </div>
       </div>
 
-      <div className="absolute top-6 left-0 right-0 text-center z-20">
+      <div className="absolute top-6 left-0 right-0 text-center z-30">
         <h1 className="text-white text-xl font-medium drop-shadow">
           Escaneie o QR Code de alguma espécie do jardim
         </h1>
