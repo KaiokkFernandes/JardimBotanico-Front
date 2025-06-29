@@ -1,9 +1,6 @@
 import HeroSection from "../components/HeroSection";
 import AboutSection from "../components/AboutSection";
 import UtilidadesSection from "../components/Forms";
-import MapSection from "../components/MapSection";
-import Sidebar from "../components/sidebar";
-
 
 function Home() {
   return (
@@ -12,7 +9,6 @@ function Home() {
         <HeroSection />
         <AboutSection />
         <UtilidadesSection />
-        <MapSection />
       </div>
     </div>
   );
