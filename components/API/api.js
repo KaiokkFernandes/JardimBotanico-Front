@@ -139,3 +139,49 @@ export async function deleteVisita(id) {
   if (!res.ok) throw new Error("Erro ao excluir formulario de visita");
   return res.json();
 }
+
+// ESTATISTICAS
+export async function getEstatisticaGenero() {
+  const res = await fetch(`${BASE_URL}/estatisticas/genero`);
+  if (!res.ok) throw new Error("Erro ao buscar estatísticas de gênero");
+  return res.json();
+}
+
+export async function getEstatisticaCursos() {
+  const res = await fetch(`${BASE_URL}/estatisticas/curso`);
+  if (!res.ok) throw new Error("Erro ao buscar estatísticas de cursos");
+  return res.json();
+}
+
+export async function getEstatisticaEstados() {
+  const res = await fetch(`${BASE_URL}/estatisticas/estado`);
+  if (!res.ok) throw new Error("Erro ao buscar estatísticas de estados");
+  return res.json();
+}
+
+export async function getEstatisticaDias() {
+  const res = await fetch(`${BASE_URL}/estatisticas/data`);
+  if (!res.ok) throw new Error("Erro ao buscar estatísticas por dia");
+  return res.json();
+}
+
+export async function getTotalVisitas(ano) {
+  try {
+    const url = ano
+      ? `${BASE_URL}/estatisticas/total-visitas?ano=${ano}`
+      : `${BASE_URL}/estatisticas/total-visitas`;
+
+    console.log("URL para total de visitas:", url);
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar total de visitas");
+    }
+
+    const data = await response.json();
+    return data.total; // ou return data, se quiser todo o objeto
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
