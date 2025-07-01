@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // cata todos os items do acervo independentemente de specimen_type
 export async function fetchEspecimes() {
