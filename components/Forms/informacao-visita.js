@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import CampoCurso from "../Utils/cursos";
 import { createVisita } from "../API/api";
+import { useToast } from "../Utils/ToastContext";
 
 const FormWrapper = styled.form`
   display: flex;
@@ -21,6 +22,8 @@ const Select = styled.select`
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -38,6 +41,8 @@ const Header = styled.h2`
 
 const Label = styled.label`
   font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
 `;
 
 const Input = styled.input`
@@ -45,6 +50,8 @@ const Input = styled.input`
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
@@ -70,6 +77,7 @@ const Button = styled.button`
   color: white;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
 
   &:hover {
     background-color: #1b5e20;
@@ -80,11 +88,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-width: 100%;
-  gap: 1rem;
-  @media (min-width: 768px) {
-    min-width: 45%;
-  }
+  gap: 0.5rem;
 `;
 
 const ButtonVoltar = styled(Button)`
@@ -96,7 +100,32 @@ const ButtonVoltar = styled(Button)`
   }
 `;
 
+const AutocompleteList = styled.ul`
+  border: 1px solid #ccc;
+  border-top: none;
+  max-height: 150px;
+  overflow-y: auto;
+  background-color: #fff;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+  margin-top: 0;
+  padding-left: 0;
+  list-style-type: none;
+  border-radius: 0 0 4px 4px;
+`;
+
+const AutocompleteItem = styled.li`
+  padding: 8px;
+  cursor: pointer;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
+
 const FormularioInformacaoVisita = () => {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     nome: "",
     genero: "",
@@ -121,8 +150,11 @@ const FormularioInformacaoVisita = () => {
     )
       .then((res) => res.json())
       .then(setEstados)
-      .catch((err) => console.error("Erro ao buscar estados:", err));
-  }, []);
+      .catch((err) => {
+        console.error("Erro ao buscar estados:", err)
+        showToast("Não foi possível carregar a lista de estados.", "error");
+      });
+  }, [showToast]);
 
   useEffect(() => {
     if (estadoSelecionado) {
@@ -131,13 +163,16 @@ const FormularioInformacaoVisita = () => {
       )
         .then((res) => res.json())
         .then(setCidades)
-        .catch((err) => console.error("Erro ao buscar cidades:", err));
+        .catch((err) => {
+            console.error("Erro ao buscar cidades:", err)
+            showToast("Não foi possível carregar a lista de cidades.", "error");
+        });
     } else {
       setCidades([]);
       setCidadeInput("");
       setCidadeSelecionada(null);
     }
-  }, [estadoSelecionado]);
+  }, [estadoSelecionado, showToast]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -147,27 +182,20 @@ const FormularioInformacaoVisita = () => {
   const handleEstadoInputChange = (e) => {
     const val = e.target.value;
     setEstadoInput(val);
-    setEstadoSelecionado(null);
-    setFormData((prev) => ({ ...prev, estado: "" }));
-    setCidadeInput("");
-    setCidadeSelecionada(null);
-    setFormData((prev) => ({ ...prev, cidade: "" }));
+    if (estadoSelecionado) setEstadoSelecionado(null);
   };
 
   const handleEstadoSelect = (estado) => {
     setEstadoInput(estado.nome);
     setEstadoSelecionado(estado);
-    setFormData((prev) => ({ ...prev, estado: estado.nome }));
+    setFormData((prev) => ({ ...prev, estado: estado.nome, cidade: "" }));
     setCidadeInput("");
-    setCidadeSelecionada(null);
-    setFormData((prev) => ({ ...prev, cidade: "" }));
   };
 
   const handleCidadeInputChange = (e) => {
     const val = e.target.value;
     setCidadeInput(val);
-    setCidadeSelecionada(null);
-    setFormData((prev) => ({ ...prev, cidade: "" }));
+    if (cidadeSelecionada) setCidadeSelecionada(null);
   };
 
   const handleCidadeSelect = (cidade) => {
@@ -175,9 +203,30 @@ const FormularioInformacaoVisita = () => {
     setCidadeSelecionada(cidade);
     setFormData((prev) => ({ ...prev, cidade: cidade.nome }));
   };
+  
+  const resetForm = () => {
+    setFormData({
+        nome: "",
+        genero: "",
+        acompanhantes: "1",
+        curso: "",
+        proposito: "",
+        estado: "",
+        cidade: "",
+      });
+      setEstadoInput("");
+      setEstadoSelecionado(null);
+      setCidadeInput("");
+      setCidadeSelecionada(null);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.nome || !formData.genero || !formData.proposito || !formData.estado || !formData.cidade) {
+        showToast("Por favor, preencha todos os campos obrigatórios.", "error");
+        return;
+    }
 
     const dataToSend = {
       visitor_name: formData.nome.toUpperCase(),
@@ -192,24 +241,12 @@ const FormularioInformacaoVisita = () => {
 
     try {
       await createVisita(dataToSend);
-      alert("Formulário enviado com sucesso!");
-      // Se quiser limpar o form:
-      setFormData({
-        nome: "",
-        genero: "",
-        acompanhantes: "1",
-        curso: "",
-        proposito: "",
-        estado: "",
-        cidade: "",
-      });
-      setEstadoInput("");
-      setEstadoSelecionado(null);
-      setCidadeInput("");
-      setCidadeSelecionada(null);
+      showToast("Formulário enviado com sucesso!", "success");
+      resetForm();
     } catch (err) {
       console.error(err);
-      alert("Erro ao enviar formulário");
+      const errorMessage = err.response?.data?.error || "Erro ao enviar formulário. Tente novamente.";
+      showToast(errorMessage, "error");
     }
   };
 
@@ -235,7 +272,6 @@ const FormularioInformacaoVisita = () => {
             required
           />
         </Container>
-
         <Container>
           <Label htmlFor="genero">Gênero:</Label>
           <Select
@@ -245,9 +281,7 @@ const FormularioInformacaoVisita = () => {
             onChange={handleChange}
             required
           >
-            <option value="" disabled>
-              Selecione
-            </option>
+            <option value="" disabled>Selecione</option>
             <option value="FEMININO">Feminino</option>
             <option value="MASCULINO">Masculino</option>
             <option value="OUTRO">Outro</option>
@@ -281,34 +315,20 @@ const FormularioInformacaoVisita = () => {
             required
           />
           {estadoInput && !estadoSelecionado && (
-            <ul
-              style={{
-                border: "1px solid #ccc",
-                maxHeight: "150px",
-                overflowY: "auto",
-                backgroundColor: "#fff",
-                position: "absolute",
-                width: "100%",
-                zIndex: 10,
-                marginTop: 0,
-                paddingLeft: 0,
-                listStyleType: "none",
-              }}
-            >
+            <AutocompleteList>
               {estados
                 .filter((estado) =>
                   estado.nome.toLowerCase().includes(estadoInput.toLowerCase())
                 )
                 .map((estado) => (
-                  <li
+                  <AutocompleteItem
                     key={estado.id}
-                    style={{ padding: "4px", cursor: "pointer" }}
                     onClick={() => handleEstadoSelect(estado)}
                   >
                     {estado.nome}
-                  </li>
+                  </AutocompleteItem>
                 ))}
-            </ul>
+            </AutocompleteList>
           )}
         </Container>
 
@@ -324,35 +344,21 @@ const FormularioInformacaoVisita = () => {
             autoComplete="off"
             required
           />
-          {cidadeInput && !cidadeSelecionada && (
-            <ul
-              style={{
-                border: "1px solid #ccc",
-                maxHeight: "150px",
-                overflowY: "auto",
-                backgroundColor: "#fff",
-                position: "absolute",
-                width: "100%",
-                zIndex: 10,
-                marginTop: 0,
-                paddingLeft: 0,
-                listStyleType: "none",
-              }}
-            >
+          {cidadeInput && !cidadeSelecionada && estadoSelecionado && (
+            <AutocompleteList>
               {cidades
                 .filter((cidade) =>
                   cidade.nome.toLowerCase().includes(cidadeInput.toLowerCase())
                 )
                 .map((cidade) => (
-                  <li
+                  <AutocompleteItem
                     key={cidade.id}
-                    style={{ padding: "4px", cursor: "pointer" }}
                     onClick={() => handleCidadeSelect(cidade)}
                   >
                     {cidade.nome}
-                  </li>
+                  </AutocompleteItem>
                 ))}
-            </ul>
+            </AutocompleteList>
           )}
         </Container>
       </LinhaFlex>
@@ -386,13 +392,12 @@ const FormularioInformacaoVisita = () => {
           name="data"
           defaultValue={dataAtual}
           required
-          onChange={() => {}}
-          disabled
+          readOnly
         />
       </Container>
 
       <Button type="submit">Enviar</Button>
-      <ButtonVoltar onClick={handleVoltar}>Voltar</ButtonVoltar>
+      <ButtonVoltar type="button" onClick={handleVoltar}>Voltar</ButtonVoltar>
     </FormWrapper>
   );
 };

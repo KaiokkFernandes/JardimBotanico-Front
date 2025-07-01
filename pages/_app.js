@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { CiUser } from "react-icons/ci";
 import styled from "styled-components";
+import { ToastProvider } from "./../components/Utils/ToastContext";
 
 const UserIconLink = styled.div`
   position: absolute;
@@ -88,7 +89,7 @@ function MyApp({ Component, pageProps }) {
   }
 
   return (
-    <>
+    <ToastProvider>
       <Navbar type={navbarType} config={navbarConfig} />
       <Layout>
         <Component {...pageProps} />
@@ -96,7 +97,7 @@ function MyApp({ Component, pageProps }) {
       {!router.pathname.startsWith("/admin") &&
         !router.pathname.startsWith("/auth") &&
         router.pathname !== "/scanner" && <BotaoScanner />}
-    </>
+    </ToastProvider>
   );
 }
 
