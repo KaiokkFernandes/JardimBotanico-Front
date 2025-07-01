@@ -165,6 +165,8 @@ function PainelGraficos() {
           <h3 style={subtitleStyle}>Visitas por Dia</h3>
           <GraficoData data={dadosDias} />
         </div>
+      </div>
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
         <button
           onClick={exportarPDF}
           style={{
@@ -176,6 +178,8 @@ function PainelGraficos() {
             borderRadius: "6px",
             cursor: "pointer",
             marginLeft: "1rem",
+            width: 300,
+            height: 40,
           }}
         >
           🖨️ Imprimir Dashboard

@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 import { FaPaw, FaLeaf, FaChartPie } from "react-icons/fa";
-import Link from 'next/link';
+import Link from "next/link";
 
 const BARRA_ALTURA = 60;
 
@@ -99,6 +99,7 @@ const Label = styled.h2`
 
 const ContainerIcone = styled.div`
   margin-top: 5em;
+  justify-self: center;
 `;
 
 const AdminLandingPage = () => {
@@ -142,10 +143,6 @@ const AdminLandingPage = () => {
           </Link>
         </CardContainer>
       </Container>
-
-      <BarraInferior>
-        <VoltarButton onClick={handleVoltar}>Voltar</VoltarButton>
-      </BarraInferior>
     </>
   );
 };
