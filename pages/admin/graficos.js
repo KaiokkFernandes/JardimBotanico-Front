@@ -5,12 +5,14 @@ import {
   getEstatisticaGenero,
   getEstatisticaDias,
   getTotalVisitas,
+  getTotalEspecimes,
 } from "../../components/API/api";
 
 import GraficoGenero from "../../components/Charts/grafico-genero";
 import GraficoEstado from "../../components/Charts/grafico-estado";
 import GraficoData from "../../components/Charts/grafico-data";
 import GraficoCursos from "../../components/Charts/grafico-curso";
+import GraficoEspecimes from "../../components/Charts/grafico-especimes";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -59,6 +61,11 @@ function PainelGraficos() {
   const [dadosCursos, setDadosCursos] = useState([]);
   const [dadosEstados, setDadosEstados] = useState([]);
   const [dadosDias, setDadosDias] = useState([]);
+  const [dadosEspecimes, setDadosEspecimes] = useState({
+    total: 0,
+    totalFauna: 0,
+    totalFlora: 0,
+  });
   const [ano, setAno] = useState(new Date().getFullYear());
   const [totalVisitas, setTotalVisitas] = useState(null);
 
@@ -67,7 +74,9 @@ function PainelGraficos() {
     getEstatisticaCursos().then(setDadosCursos).catch(console.error);
     getEstatisticaEstados().then(setDadosEstados).catch(console.error);
     getEstatisticaDias().then(setDadosDias).catch(console.error);
+    getTotalEspecimes().then(setDadosEspecimes).catch(console.error);
   }, []);
+
   useEffect(() => {
     getTotalVisitas(ano).then(setTotalVisitas).catch(console.error);
   }, [ano]); // <- reexecuta toda vez que `ano` mudar
@@ -77,10 +86,18 @@ function PainelGraficos() {
   const cursosRef = useRef();
   const estadoRef = useRef();
   const dataRef = useRef();
+  const especimesRef = useRef();
 
   const exportarPDF = async () => {
     const pdf = new jsPDF("p", "pt", "a4");
-    const refs = [totalRef, generoRef, cursosRef, estadoRef, dataRef];
+    const refs = [
+      totalRef,
+      generoRef,
+      cursosRef,
+      estadoRef,
+      dataRef,
+      especimesRef,
+    ];
 
     for (let i = 0; i < refs.length; i++) {
       const canvas = await html2canvas(refs[i].current, {
@@ -164,6 +181,14 @@ function PainelGraficos() {
         <div ref={dataRef} style={cardStyle}>
           <h3 style={subtitleStyle}>Visitas por Dia</h3>
           <GraficoData data={dadosDias} />
+        </div>
+        <div ref={especimesRef} style={cardStyle}>
+          <h3 style={subtitleStyle}>Espécies cadastradas</h3>
+          <GraficoEspecimes
+            totalFauna={dadosEspecimes.totalFauna}
+            totalFlora={dadosEspecimes.totalFlora}
+            total={dadosEspecimes.total}
+          />
         </div>
       </div>
       <div style={{ textAlign: "center", marginTop: "2rem" }}>

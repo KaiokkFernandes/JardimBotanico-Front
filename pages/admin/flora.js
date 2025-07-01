@@ -77,8 +77,6 @@ const PainelFlora = () => {
           FaunaOrFlora={faunaOrFlora}
         />
       )}
-
-      <BarraInferior />
     </Container>
   );
 };

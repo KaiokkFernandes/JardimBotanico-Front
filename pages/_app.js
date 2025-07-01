@@ -67,7 +67,56 @@ function MyApp({ Component, pageProps }) {
         ),
       };
       break;
-
+    case "/admin/flora":
+      navbarType = "text";
+      navbarConfig = {
+        text: "🌿 Painel da Flora",
+        rightContent: (
+          <button
+            onClick={() => router.push("/admin")}
+            style={{
+              padding: "0.5rem 1rem",
+              fontSize: "0.9rem",
+              backgroundColor: "#2e7d32",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              transition: "background-color 0.3s ease",
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#1b5e20")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#2e7d32")}
+          >
+            ⬅ Voltar
+          </button>
+        ),
+      };
+      break;
+    case "/admin/fauna":
+      navbarType = "text";
+      navbarConfig = {
+        text: "🐊 Painel da Fauna",
+        rightContent: (
+          <button
+            onClick={() => router.push("/admin")}
+            style={{
+              padding: "0.5rem 1rem",
+              fontSize: "0.9rem",
+              backgroundColor: "#2e7d32",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              transition: "background-color 0.3s ease",
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#1b5e20")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#2e7d32")}
+          >
+            ⬅ Voltar
+          </button>
+        ),
+      };
+      break;
     default:
       navbarType = "default";
       navbarConfig = {

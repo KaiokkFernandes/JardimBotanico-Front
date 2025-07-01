@@ -17,7 +17,7 @@ export async function fetchEspecimeById(id) {
   const res = await fetch(`${BASE_URL}/especimes/${id}`);
   if (!res.ok) throw new Error("Erro ao buscar espécime");
   return res.json();
-} 
+}
 
 // cria um item no acervo
 export async function createEspecime(data) {
@@ -140,7 +140,6 @@ export async function deleteVisita(id) {
   return res.json();
 }
 
-
 export async function loginUser({ email, password }) {
   const res = await fetch(`${BASE_URL}/login`, {
     method: "POST",
@@ -200,3 +199,18 @@ export async function getTotalVisitas(ano) {
   }
 }
 
+export async function getTotalEspecimes() {
+  try {
+    const response = await fetch(`${BASE_URL}/estatisticas/total-especimes`);
+    if (!response.ok) {
+      throw new Error("Erro ao buscar total de espécimes");
+    }
+
+    const data = await response.json();
+    console.log("Total de espécimes:", data);
+    return data; // ou return data, se quiser todo o objeto
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
