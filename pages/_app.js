@@ -1,11 +1,11 @@
 import "../styles/globals.css";
 import Navbar from "../components/Navbar/Navbar";
 import BotaoScanner from "../components/BotaoScanner/BotaoScanner";
-import Layout from "../components/Layout/index"; 
+import Layout from "../components/Layout/index";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { CiUser } from "react-icons/ci";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const UserIconLink = styled.div`
   position: absolute;
@@ -41,6 +41,31 @@ function MyApp({ Component, pageProps }) {
           ) : null,
       };
       break;
+    case "/admin/graficos":
+      navbarType = "text";
+      navbarConfig = {
+        text: "📈 Dashboard de Visitas",
+        rightContent: (
+          <button
+            onClick={() => router.push("/admin")}
+            style={{
+              padding: "0.5rem 1rem",
+              fontSize: "0.9rem",
+              backgroundColor: "#2e7d32",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              transition: "background-color 0.3s ease",
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#1b5e20")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#2e7d32")}
+          >
+            ⬅ Voltar
+          </button>
+        ),
+      };
+      break;
 
     default:
       navbarType = "default";
@@ -68,7 +93,9 @@ function MyApp({ Component, pageProps }) {
       <Layout>
         <Component {...pageProps} />
       </Layout>
-      {router.pathname !== "/scanner" && <BotaoScanner />}
+      {!router.pathname.startsWith("/admin") &&
+        !router.pathname.startsWith("/auth") &&
+        router.pathname !== "/scanner" && <BotaoScanner />}
     </>
   );
 }
