@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import { IoIosReturnLeft } from "react-icons/io";
 import Link from 'next/link';
-import { fetchUsers } from '../API/api';
+import { loginUser } from '../API/api';
 import { useRouter } from 'next/router';
 
 const FormWrapper = styled.form`
@@ -84,19 +84,15 @@ const TopIconLink = styled.a`
 const LoginForm = ({ onSwitch }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const users = await fetchUsers();
-      const user = users.find(u => u.email === email && u.password === password); // simplificado
-
-      if (user) {
-        alert('Login bem-sucedido!');
-        router.push('/admin'); // caso seja mesma aplicação
-      } else {
-        alert('Usuário ou senha inválidos');
-      }
+      const data = await loginUser({ email, password });
+      localStorage.setItem('token', data.token);
+      alert('Login bem-sucedido!');
+      router.push('/admin');
     } catch (error) {
       alert(error.message);
     }

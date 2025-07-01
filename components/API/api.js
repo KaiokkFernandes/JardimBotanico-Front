@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3333";
 
 // cata todos os items do acervo independentemente de specimen_type
 export async function fetchEspecimes() {
@@ -17,7 +17,7 @@ export async function fetchEspecimeById(id) {
   const res = await fetch(`${BASE_URL}/especimes/${id}`);
   if (!res.ok) throw new Error("Erro ao buscar espécime");
   return res.json();
-}
+} 
 
 // cria um item no acervo
 export async function createEspecime(data) {
@@ -137,5 +137,18 @@ export async function deleteVisita(id) {
     method: "DELETE",
   });
   if (!res.ok) throw new Error("Erro ao excluir formulario de visita");
+  return res.json();
+}
+
+export async function loginUser({ email, password }) {
+  const res = await fetch(`${BASE_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || "Erro ao fazer login");
+  }
   return res.json();
 }
