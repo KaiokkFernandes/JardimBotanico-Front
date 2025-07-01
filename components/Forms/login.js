@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { IoIosReturnLeft } from "react-icons/io";
 import Link from 'next/link';
 import { loginUser } from '../API/api';
 import { useRouter } from 'next/router';
+import { useToast } from '../Utils/ToastContext';
 
 const FormWrapper = styled.form`
   display: flex;
@@ -13,6 +14,8 @@ const FormWrapper = styled.form`
   border-radius: 8px;
   width: 100%;
   max-width: 350px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 `;
 
 const Header = styled.div`
@@ -22,22 +25,26 @@ const Header = styled.div`
   color: white;
   text-align: center;
   margin-bottom: 1rem;
+  padding: 0.5rem 0;
 `;
 
 const Label = styled.label`
   font-weight: 500;
   margin-bottom: 0.25rem;
+  display: block;
 `;
 
 const Input = styled.input`
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  width: 92%;
+  width: 100%;
+  box-sizing: border-box; /* Garante que o padding não aumente a largura */
   &:focus {
     outline: none;
     border-color: #2e7d32;
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
   }
 `;
 
@@ -49,6 +56,7 @@ const Button = styled.button`
   color: white;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
 
   &:hover {
     background-color: #1b5e20;
@@ -70,35 +78,39 @@ const HelperText = styled.p`
   margin-top: 0.5rem;
 `;
 
-const TopIconLink = styled.a`
-  top: 1rem;
-  left: 1rem;
-  color: #1b5e20;
-  cursor: pointer;
-
-  &:hover {
-    color: #145a14;
-  }
+const BackLinkWrapper = styled.div`
+  margin-top: 1rem;
 `;
+
 
 const LoginForm = ({ onSwitch }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const { showToast } = useToast();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      showToast('Por favor, preencha todos os campos.', 'error');
+      return;
+    }
     try {
       const data = await loginUser({ email, password });
       localStorage.setItem('token', data.token);
-      alert('Login bem-sucedido!');
-      router.push('/admin');
+
+      showToast('Login bem-sucedido!', 'success');
+      
+      setTimeout(() => {
+        router.push('/admin');
+      }, 1500);
+
     } catch (error) {
-      alert(error.message);
+      const errorMessage = error.response?.data?.error || 'Erro ao fazer login. Tente novamente.';
+      showToast(errorMessage, 'error');
     }
   };
   
-
   return (
     <FormWrapper onSubmit={handleLogin}>
       <Header>
@@ -106,7 +118,7 @@ const LoginForm = ({ onSwitch }) => {
       </Header>
       <div>
         <Label htmlFor="loginEmail">E-mail:</Label>
-        <Input id="loginEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />      
+        <Input id="loginEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />       
       </div>
       <div>
         <Label htmlFor="loginPassword">Senha:</Label>
@@ -121,9 +133,11 @@ const LoginForm = ({ onSwitch }) => {
       <HelperText>
         <StyledLink color='darkred'>Esqueceu a senha?</StyledLink>
       </HelperText>
-      <Link href="/" passHref>
-          <IoIosReturnLeft style={{height: 32, width: 32}}/>
-      </Link>
+      <BackLinkWrapper>
+        <Link href="/" passHref>
+          <IoIosReturnLeft style={{height: 32, width: 32, cursor: 'pointer', color: '#1b5e20'}}/>
+        </Link>
+      </BackLinkWrapper>
     </FormWrapper>
   );
 };
