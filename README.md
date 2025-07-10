@@ -153,7 +153,6 @@ Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 ### 🗺 Localização
 - Integração com Google Maps
-- Marcadores de pontos de interesse
 - Rotas e direções para o jardim
 
 ### 📝 Formulários
