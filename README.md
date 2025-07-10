@@ -3,7 +3,6 @@
 Uma aplicação web moderna e interativa para explorar e gerenciar o acervo digital do Jardim Botânico da Universidade Federal de Santa Maria (UFSM). Este projeto oferece uma experiência rica em informações sobre flora e fauna, com funcionalidades avançadas de visualização, pesquisa e administração.
 
 ![Next.js](https://img.shields.io/badge/Next.js-13.1.6-black?style=flat-square&logo=next.js)
-![React](https://img.shields.io/badge/React-18.2.0-blue?style=flat-square&logo=react)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.10-06B6D4?style=flat-square&logo=tailwindcss)
 ![Styled Components](https://img.shields.io/badge/Styled%20Components-6.1.19-DB7093?style=flat-square&logo=styled-components)
 
