@@ -28,6 +28,8 @@ Uma aplicação web moderna e interativa para explorar e gerenciar o acervo digi
 - 🎯 **Área Administrativa**: Painel completo para gestão do acervo
 - 🌍 **PWA Ready**: Otimizado para dispositivos móveis
 
+  Link do site em produção: https://data-tab-self.vercel.app
+
 ## 🛠 Tecnologias
 
 ### Frontend
